@@ -1,0 +1,19 @@
+{
+  "name": "tux-remote",
+  "version": "0.0.1",
+  "description": "",
+  "main": "TuxRemote.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BinariesBrother/TuxRemote.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BinariesBrother/TuxRemote/issues"
+  },
+  "homepage": "https://github.com/BinariesBrother/TuxRemote#readme"
+}
