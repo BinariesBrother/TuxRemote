@@ -7,6 +7,7 @@
  *    ]
  *  }
  */
+let fs = require('fs');
 
 /**
  * Short class to represent a module.
@@ -18,7 +19,7 @@ class ModuleInfo {
     this.path = path;
     this.JSONPath = path +'/'+ name +'/'+ name +'.json';
     this.jsPath = path +'/'+ name +'/'+ name +'.js';
-    this.infos = JSON.parse(require('fs').readFileSync(this.JSONPath, {"encoding" : "utf8"}));
+    this.infos = JSON.parse(fs.readFileSync(this.JSONPath, {"encoding" : "utf8"}));
   }
 
   get deps() {
@@ -33,8 +34,6 @@ class ModuleInfo {
 class ModuleManager {
 
   constructor() {
-    this.fs = require('fs');
-    this.path = require('path');
     this.modulePaths = [
       __dirname + '/modules',
     ];
@@ -87,7 +86,7 @@ class ModuleManager {
 
   _getModulesName(path) {
     try {
-      return this.fs.readdirSync(path);
+      return fs.readdirSync(path);
     }
     catch (e) {
       return [];
