@@ -9,13 +9,14 @@ var hook = require('./hook.js');
  */
 program
   .version('0.0.1')
-  .option('-d, --debug',   'active debug log')
-  .option('-e, --error',   'active error log')
-  .option('-o, --todo',    'active todo log')
-  .option('-i, --info',    'active info log')
-  .option('-w, --warning', 'active warning log')
-  .option('-t, --trace',   'active trace log')
-  .option('-a, --all',     'active all log')
+  .option('-d, --debug',    'Enable debug log')
+  .option('-e, --error',    'Enable error log')
+  .option('-o, --todo',     'Enable todo log')
+  .option('-i, --info',     'Enable info log')
+  .option('-w, --warning',  'Enable warning log')
+  .option('-t, --trace',    'Enable trace log')
+  .option('-a, --all',      'Enable all log')
+  .option('-p, --port <n>', 'Use specific port. Default to 3000', parseInt)
   .parse(process.argv);
 
 if (program.all === undefined) {
