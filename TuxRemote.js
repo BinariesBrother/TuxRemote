@@ -17,6 +17,7 @@ program
   .option('-t, --trace',    'Enable trace log')
   .option('-a, --all',      'Enable all log')
   .option('-p, --port <n>', 'Use specific port. Default to 3000', parseInt)
+  .option('-h, --hostname <n>', 'Use specific hostname. Default to 0.0.0.0')
   .parse(process.argv);
 
 if (program.all === undefined) {
