@@ -4,10 +4,14 @@ var server  = require('../server/server.js');
 var app     = server.app;
 
 var static_dirs = [
-  '/app/',
+  process.cwd() + '/static/', // Global static folder.
+  __dirname + '/app/',
 ];
+
+logger.debug('Static folders are:')
 for (var i in static_dirs) {
-  app.use(express.static(__dirname + static_dirs[i]));
+  app.use(express.static(static_dirs[i]));
+  logger.debug(static_dirs[i]);
 }
 
 // app.get('/', function(req, res){
