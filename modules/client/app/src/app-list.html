@@ -10,20 +10,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/bower_components/iron-image/iron-image.html">
+<link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-ripple/paper-ripple.html">
 <link rel="import" href="/bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="/bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="view-apps">
+<dom-module id="app-list">
   <template>
     <style include="shared-styles">
       :host {
+        --app-primary-color: var(--paper-grey-800);
+        --app-secondary-color: black;
         display: block;
+        height: 100%;
 
         --image-radius: 50%;
         --image-size: 42px;
+      }
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
       }
       paper-listbox {
         padding: 0;
@@ -39,7 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     </style>
-    <paper-listbox>
+    <paper-listbox on-iron-select="_onItemSelect">
       <template is="dom-repeat" items="{{applications}}" as="application">
         <paper-icon-item>
           <paper-ripple></paper-ripple>
@@ -56,7 +66,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'view-apps',
+      is: 'app-list',
 
       properties: {
         applications: {
@@ -75,7 +85,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         for (let i = 0; i < 42; i++) {
           this.push('applications', { name: 'Item ' + i});
         }
-      }
+      },
+
+      _onItemSelect: function(event, item) {
+        this.fire('app-select', item);
+      },
     });
   </script>
 </dom-module>
