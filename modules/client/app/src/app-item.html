@@ -1,0 +1,71 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+<link rel="import" href="/bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="/bower_components/paper-item/paper-item-behavior.html">
+<link rel="import" href="/bower_components/paper-item/paper-item-shared-styles.html">
+<link rel="import" href="/bower_components/paper-item/paper-item-body.html">
+
+<link rel="import" href="shared-styles.html">
+
+<!-- "Extends" paper-icon-item component -->
+<dom-module id="app-item">
+  <template>
+    <style include="paper-item-shared-styles"></style>
+    <style include="shared-styles">
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--paper-font-subhead);
+
+        @apply(--paper-item);
+        @apply(--paper-icon-item);
+
+        --image-radius: 50%;
+        --image-size: 42px;
+      }
+
+      .content-icon {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+
+        width: var(--paper-item-icon-width, 56px);
+        @apply(--paper-item-icon);
+      }
+
+      iron-image {
+        background-color: var(--paper-grey-400);
+        display: inline-block;
+        width: var(--image-size);
+        height: var(--image-size);
+        border-radius: var(--image-radius);
+        --iron-image-placeholder: {
+          border-radius: var(--image-radius);
+        }
+      }
+    </style>
+    <div class="content-icon">
+      <iron-image sizing="cover" preload fade
+          src="{{icon}}" item-icon></iron-image>
+    </div>
+    <paper-item-body two-line>
+      <div>{{name}}</div>
+      <div secondary>{{description}}</div>
+    </paper-item-body>
+    <paper-ripple></paper-ripple><!-- fix image radius issue... -->
+  </template>
+  <script>
+    Polymer({
+      is: 'app-item',
+
+      behaviors: [
+        Polymer.PaperItemBehavior
+      ],
+
+      properties: {
+        name: '',
+        description: '',
+        icon: '',
+      },
+    });
+  </script>
+</dom-module>

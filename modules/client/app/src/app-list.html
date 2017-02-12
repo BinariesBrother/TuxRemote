@@ -9,57 +9,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="/bower_components/polymer/polymer.html">
-<link rel="import" href="/bower_components/iron-image/iron-image.html">
 <link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="/bower_components/paper-ripple/paper-ripple.html">
-<link rel="import" href="/bower_components/paper-item/paper-icon-item.html">
-<link rel="import" href="/bower_components/paper-item/paper-item-body.html">
+
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="app-item.html">
 
 <dom-module id="app-list">
   <template>
     <style include="shared-styles">
       :host {
-        --app-primary-color: var(--paper-grey-800);
-        --app-secondary-color: black;
         display: block;
         height: 100%;
-
-        --image-radius: 50%;
-        --image-size: 42px;
-      }
-      app-header {
-        color: #fff;
-        background-color: var(--app-primary-color);
       }
       paper-listbox {
         padding: 0;
       }
-      paper-icon-item iron-image {
-        background-color: var(--paper-grey-400);
-        display: inline-block;
-        width: var(--image-size);
-        height: var(--image-size);
-        border-radius: var(--image-radius);
-        --iron-image-placeholder: {
-          border-radius: var(--image-radius);
-        }
-      }
     </style>
     <paper-listbox on-iron-select="_onItemSelect">
       <template is="dom-repeat" items="{{applications}}" as="application">
-        <paper-icon-item>
-          <paper-ripple></paper-ripple>
-          <iron-image class="circle" sizing="cover" preload fade
-              src="http://lorempixel.com/40/40" item-icon></iron-image>
-          <paper-item-body two-line>
-            <div>{{application.name}}</div>
-            <!-- <div secondary>PLOP</div> -->
-          </paper-item-body>
-        </paper-icon-item>
+        <app-item
+          name="{{application.name}}"
+          icon="{{application.icon}}"></app-item>
       </template>
     </paper-listbox>
   </template>
@@ -77,13 +50,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready: function() {
         this.applications = [
-          { name: 'Chormium Browser'},
-          { name: 'Atom'},
-          { name: 'Terminal'},
+          {
+            name: 'Chormium Browser',
+            icon: 'http://lorempixel.com/41/41'
+          },
+          {
+            name: 'Atom',
+            icon: 'http://lorempixel.com/42/42'
+          },
+          {
+            name: 'Terminal',
+            icon: 'http://lorempixel.com/43/43'
+          },
         ];
-        this.push('applications', { name: 'Terminator'});
+        this.push('applications', {
+          name: 'Terminator',
+          icon: 'http://lorempixel.com/44/44'
+        });
         for (let i = 0; i < 42; i++) {
-          this.push('applications', { name: 'Item ' + i});
+          this.push('applications', {
+            name: 'Item ' + i,
+            icon: 'http://lorempixel.com/40/40'
+          });
         }
       },
 

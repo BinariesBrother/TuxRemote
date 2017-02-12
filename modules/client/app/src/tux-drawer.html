@@ -1,0 +1,72 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="app-icons.html">
+<link rel="import" href="app-list.html">
+
+<dom-module id="tux-drawer">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        height: 100%;
+      }
+    </style>
+    <app-header-layout has-scrolling-region>
+      <app-header class="drawer-header" condenses fixed>
+        <app-toolbar>
+          <div main-title>[[_drawerTitle(current.type)]]</div>
+          <paper-icon-button icon="app-icons:settings"
+            hidden$="[[_hidden(current.type, 'admin-menu')]]"
+            on-tap="_switchToAdminMenu"></paper-icon-button>
+          <paper-icon-button icon="app-icons:apps"
+            hidden$="[[_hidden(current.type, 'app-list')]]"
+            on-tap="_switchToAppList"></paper-icon-button>
+        </app-toolbar>
+      </app-header>
+      <iron-pages selected="[[current.type]]" attr-for-selected="name">
+        <app-list name="app-list"></app-list>
+      </iron-pages>
+    </app-header-layout>
+  </template>
+  <script>
+    Polymer({
+      is: 'tux-drawer',
+
+      properties: {
+        current: {
+          type: Object,
+          value: {
+            type: 'app-list',
+          },
+        },
+      },
+
+      _drawerTitle: function(type) {
+        return type == 'admin-menu' ? 'Admin Menu' : 'Applications';
+      },
+
+      _hidden: function(type, check) {
+        return type && type == check;
+      },
+
+      _switch: function(to) {
+        this.set('current.type', to);
+      },
+
+      _switchToAdminMenu: function() {
+        this._switch('admin-menu');
+      },
+
+      _switchToAppList: function() {
+        this._switch('app-list');
+      },
+    });
+  </script>
+</dom-module>
