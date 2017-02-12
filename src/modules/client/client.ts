@@ -1,17 +1,17 @@
-var express = require('express');
-var logger  = require('node-yolog');
-var server  = require('../server/server.js');
-var path    = require('path');
-var appDir  = path.dirname(require.main.filename);
-var app     = server.app;
+import * as express from "express";
+import * as logger from "node-yolog";
+import * as path from "path";
+import {app} from "../server/server";
 
-var static_dirs = [
-  appDir + '/static/', // Global static folder.
-  __dirname + '/app/',
+let appDir = path.dirname(require.main.filename);
+
+let static_dirs = [
+  appDir + "/static/", // Global static folder.
+  __dirname + "/app/",
 ];
 
-logger.debug('Static folders are:')
-for (var i in static_dirs) {
+logger.debug("Static folders are:");
+for (let i in static_dirs) {
   app.use(express.static(static_dirs[i]));
   logger.debug(static_dirs[i]);
 }
