@@ -1,10 +1,12 @@
 var express = require('express');
 var logger  = require('node-yolog');
 var server  = require('../server/server.js');
+var path    = require('path');
+var appDir  = path.dirname(require.main.filename);
 var app     = server.app;
 
 var static_dirs = [
-  process.cwd() + '/static/', // Global static folder.
+  appDir + '/static/', // Global static folder.
   __dirname + '/app/',
 ];
 

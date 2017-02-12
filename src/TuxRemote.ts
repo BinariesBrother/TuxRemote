@@ -1,5 +1,5 @@
-var program = require('commander');
-var logger  = require('node-yolog');
+import * as program from 'commander';
+import * as logger  from 'node-yolog';
 
 var ModuleManager = require('./moduleManager.js');
 var hook = require('./hook.js');
