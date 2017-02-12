@@ -1,5 +1,6 @@
 import * as program from 'commander';
 import * as logger  from 'node-yolog';
+import "reflect-metadata";
 
 var ModuleManager = require('./moduleManager.js');
 var hook = require('./hook.js');

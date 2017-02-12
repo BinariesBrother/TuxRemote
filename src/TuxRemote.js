@@ -1,6 +1,7 @@
 "use strict";
 const program = require("commander");
 const logger = require("node-yolog");
+require("reflect-metadata");
 var ModuleManager = require('./moduleManager.js');
 var hook = require('./hook.js');
 program
