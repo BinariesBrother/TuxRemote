@@ -24,7 +24,9 @@ module.exports = function(grunt) {
           module: "commonjs",
           target: "es6",
           sourceMap: false,
-          allowJs: true
+          allowJs: true,
+          emitDecoratorMetadata: true,
+          experimentalDecorators: true
         }
       }
     },
@@ -46,6 +48,10 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask("deploy", [
+    "copy"
+  ]);
+
+  grunt.registerTask("createdb", [
     "copy"
   ]);
 
