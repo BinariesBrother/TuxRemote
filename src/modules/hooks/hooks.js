@@ -11,10 +11,11 @@ function hook(name, context = null) {
 }
 exports.hook = hook;
 function invoke(name, ...args) {
-    keyring.pullRing.apply(keyring, arguments);
+    return keyring.pullRing.apply(keyring, arguments);
 }
 exports.invoke = invoke;
 function defineHook(name) {
     keyring.createRing(name);
+    return name;
 }
 exports.defineHook = defineHook;

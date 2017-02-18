@@ -11,18 +11,20 @@ class Ring {
         }
     }
     pull() {
+        let result = [];
         if (arguments.length === 0) {
             for (let i = 0; i < this.hookArray.length; i++) {
                 let hook = this.hookArray[i];
-                hook();
+                result = result.concat(hook());
             }
         }
         else {
             for (let i = 0; i < this.hookArray.length; i++) {
                 let hook = this.hookArray[i];
-                hook.apply(hook, arguments);
+                result = result.concat(hook.apply(hook, arguments));
             }
         }
+        return result;
     }
     hookValidator(hook) {
         if (typeof hook !== "function") {

@@ -16,20 +16,22 @@ export class Ring {
   }
 
   pull() {
+    let result = [];
     // Hook without arguments
     if (arguments.length === 0) {
       for (let i = 0; i < this.hookArray.length; i++) {
         let hook = this.hookArray[i];
-        hook();
+        result = result.concat(hook());
       }
     }
     // Hook with arguments
     else {
       for (let i = 0; i < this.hookArray.length; i++) {
         let hook = this.hookArray[i];
-        hook.apply(hook, arguments);
+        result = result.concat(hook.apply(hook, arguments));
       }
     }
+    return result;
   }
 
   hookValidator(hook) {

@@ -13,9 +13,10 @@ export function hook(name: string, context: Function = null) {
 }
 
 export function invoke(name: string, ...args) {
-  keyring.pullRing.apply(keyring, arguments);
+  return keyring.pullRing.apply(keyring, arguments);
 }
 
 export function defineHook(name: string) {
   keyring.createRing(name);
+  return name;
 }

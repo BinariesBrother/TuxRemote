@@ -27,7 +27,7 @@ export class Keyring {
     if (typeof this.rings[ringName] !== "undefined") {
       let hookArgs = Array.prototype.slice.call(arguments, 1);
       let ring = this.rings[ringName];
-      ring.pull.apply(ring, hookArgs);
+      return ring.pull.apply(ring, hookArgs);
     }
     else {
       throw new RingNotFoundError(ringName, this.name);
