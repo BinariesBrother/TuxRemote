@@ -17,11 +17,26 @@ import {hook, defineHook} from "../hook/hook";
 
 class HandleSocketApi {
 
-  @hook("socket_api__event_listener", () => [
+  static instance: HandleSocketApi;
+
+  public events: Array<String>;
+
+  private constructor() {
+    this.events = [
       defineHook("socket_event"),
       defineHook("other_socket_event")
-    ])
-  defineEventListener() { return this; }
+    ];
+  }
+
+  static getInstance() {
+    if (!HandleSocketApi.instance) {
+      HandleSocketApi.instance = new HandleSocketApi();
+    }
+    return HandleSocketApi.instance;
+  }
+
+  @hook("socket_api__event_listener", () => HandleSocketApi.getInstance())
+  defineEventListener() { return this.events; }
 
   @hook("socket_event")
   onSocketEvent(socket, args) {

@@ -7,13 +7,26 @@ defineHook("socket_api__get_running_app_list");
 
 class SocketApi {
 
-  @hook("socket_api__event_listener", () => [
-      // defineHook and use it in callback context.
-      // defineHook return the hook name.
+  static instance: SocketApi;
+
+  public events: Array<String>;
+
+  private constructor() {
+    this.events = [
       defineHook("socket_api__running_apps"),
       defineHook("socket_api__log")
-    ])
-  defineEventListener() { return this; }
+    ];
+  }
+
+  static getInstance() {
+    if (!SocketApi.instance) {
+      SocketApi.instance = new SocketApi();
+    }
+    return SocketApi.instance;
+  }
+
+  @hook("socket_api__event_listener", () => SocketApi.getInstance())
+  defineEventListener() { return this.events; }
 
   @hook("socket_api__running_apps")
   onRunningApps(socket, args) {

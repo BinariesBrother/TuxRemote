@@ -14,7 +14,19 @@ const hooks_1 = require("../hooks/hooks");
 hooks_1.defineHook("socket_api__event_listener");
 hooks_1.defineHook("socket_api__get_running_app_list");
 class SocketApi {
-    defineEventListener() { return this; }
+    constructor() {
+        this.events = [
+            hooks_1.defineHook("socket_api__running_apps"),
+            hooks_1.defineHook("socket_api__log")
+        ];
+    }
+    static getInstance() {
+        if (!SocketApi.instance) {
+            SocketApi.instance = new SocketApi();
+        }
+        return SocketApi.instance;
+    }
+    defineEventListener() { return this.events; }
     onRunningApps(socket, args) {
         let running_app_list = hooks_1.invoke("socket_api__get_running_app_list");
         socket.emit("socket_api__running_apps", running_app_list);
@@ -26,10 +38,7 @@ class SocketApi {
     }
 }
 __decorate([
-    hooks_1.hook("socket_api__event_listener", () => [
-        hooks_1.defineHook("socket_api__running_apps"),
-        hooks_1.defineHook("socket_api__log")
-    ]),
+    hooks_1.hook("socket_api__event_listener", () => SocketApi.getInstance()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
