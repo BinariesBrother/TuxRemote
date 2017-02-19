@@ -4,15 +4,16 @@
 <link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="/bower_components/app-route/app-location.html">
-<link rel="import" href="/bower_components/app-route/app-route.html">
+<!-- <link rel="import" href="/bower_components/app-route/app-location.html"> -->
+<!-- <link rel="import" href="/bower_components/app-route/app-route.html"> -->
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="/bower_components/iron-selector/iron-selector.html">
+<!-- <link rel="import" href="/bower_components/iron-selector/iron-selector.html"> -->
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="app-icons.html">
 <link rel="import" href="tux-drawer.html">
+<link rel="import" href="app-view.html">
 
 <dom-module id="tux-remote">
   <template>
@@ -21,16 +22,16 @@
         display: block;
       }
     </style>
-    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <!-- <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
         route="{{route}}"
         pattern="/:page"
         data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+        tail="{{subroute}}"></app-route> -->
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer" swipe-open no-focus-trap>
-        <tux-drawer on-app-select="_onAppSelect"></tux-drawer>
+        <tux-drawer selected="{{selected}}"></tux-drawer>
       </app-drawer>
 
       <!-- Main content -->
@@ -44,11 +45,11 @@
         </app-header>
 
         <iron-pages
-            selected="[[page]]"
+            selected="{{_computeSelected(selected)}}"
             attr-for-selected="name"
             fallback-selection="notfound"
             role="main">
-          <view-apps name="apps"></view-apps>
+          <app-view application="{{_getApplication(selected)}}" name="app-view"></app-view>
           <view-notfound name="notfound"></view-notfound>
         </iron-pages>
       </app-header-layout>
@@ -65,14 +66,40 @@
         //   reflectToAttribute: true,
         //   observer: '_pageChanged',
         // },
+        selected: {
+          type: Object,
+          value: {},
+          // observer: '_onSelecedChanged'
+        },
       },
 
       observers: [
         // '_routePageChanged(routeData.page)',
       ],
 
-      _onAppSelect: function(event, detail) {
-        console.log(detail);
+      // _onAppSelect: function(event, detail) {
+      //   console.log(detail);
+      // },
+
+      _onSelecedChanged: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          // var resolvedPageUrl = this.resolveUrl('app-view.html');
+          // this.importHref(resolvedPageUrl, null, this._show404, true);
+        }
+      },
+
+      _computeSelected: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return 'app-view';
+        }
+        return 'notfound';
+      },
+
+      _getApplication: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return selected.item.application;
+        }
+        return {};
       },
 
       // _routePageChanged: function(page) {
@@ -89,9 +116,9 @@
       //   this.importHref(resolvedPageUrl, null, this._showPage404, true);
       // },
 
-      // _showPage404: function() {
-      //   this.page = 'notfound';
-      // },
+      _show404: function() {
+        this.selected = {};
+      },
 
     });
   </script>

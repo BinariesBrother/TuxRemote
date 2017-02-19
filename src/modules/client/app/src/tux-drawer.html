@@ -31,7 +31,7 @@
         </app-toolbar>
       </app-header>
       <iron-pages selected="[[current.type]]" attr-for-selected="name">
-        <app-list name="app-list"></app-list>
+        <app-list name="app-list" selected={{selected}}></app-list>
       </iron-pages>
     </app-header-layout>
   </template>
@@ -46,12 +46,11 @@
             type: 'app-list',
           },
         },
-        // selected: {
-        //   type: Object,
-        //   value: {
-        //     type: 'view-app',
-        //   },
-        // },
+        selected: {
+          type: Object,
+          notify: true,
+          value: {},
+        },
       },
 
       _drawerTitle: function(type) {
