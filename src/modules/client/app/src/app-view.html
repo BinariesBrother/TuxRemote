@@ -1,0 +1,54 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="app-icons.html">
+
+<dom-module id="app-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+
+        --image-radius: 50%;
+        --image-size: 42px;
+      }
+      iron-image {
+        background-color: var(--paper-grey-400);
+        display: inline-block;
+        width: var(--image-size);
+        height: var(--image-size);
+        border-radius: var(--image-radius);
+        --iron-image-placeholder: {
+          border-radius: var(--image-radius);
+        }
+      }
+    </style>
+    <iron-image sizing="cover" preload fade
+        src="{{application.icon}}"></iron-image>
+    <h2>{{application.name}}</h2>
+  </template>
+  <script>
+    Polymer({
+      is: 'app-view',
+
+      properties: {
+        application: {
+          type: Object,
+          value: {},
+          observer: '_onApplicationChanged'
+        },
+      },
+
+      ready: function() {
+        // console.log(this.application);
+      },
+
+      _onApplicationChanged: function(application) {
+        console.log(application);
+      }
+    });
+  </script>
+</dom-module>
