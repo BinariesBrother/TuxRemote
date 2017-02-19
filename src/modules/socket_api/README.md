@@ -4,10 +4,8 @@ Provide useful hooks to work with socket events.
 
 | Hook | description |
 |------|-------------|
-| socket_api__running_apps | The client want to get the running app list. |
-| socket_api__get_running_app_list | Allow other modules to populate the running app list. |
-| socket_api__log | The client want to log a message on the server side. |
-| socket_api__event_listener | Allows other modules to set their own listenable event on the socket. Call the invoke function with the event, socket and parameters sent by the client for this event, so be certain to define before the hook via the defineHook function. |
+| tuxRemote/log | The client want to log a message on the server side. |
+| tuxRemote/socket/eventListener | Allows other modules to set their own listenable event on the socket. Call the invoke function with the event, socket and parameters sent by the client for this event, so be certain to define before the hook via the defineHook function. |
 
 ## How to use socket_api__event_listener
 
@@ -35,17 +33,12 @@ class HandleSocketApi {
     return HandleSocketApi.instance;
   }
 
-  @hook("socket_api__event_listener", () => HandleSocketApi.getInstance())
+  @hook("tuxRemote/socket/eventListener", () => HandleSocketApi.getInstance())
   defineEventListener() { return this.events; }
 
   @hook("socket_event")
   onSocketEvent(socket, args) {
     // Your code here
-  }
-
-  @hook("socket_api__get_running_app_list")
-  onGetRunningAppList() {
-    return ["app1","app2"]; // TODO replace string name with app object.
   }
 }
 

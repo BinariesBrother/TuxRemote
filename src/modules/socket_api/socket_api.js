@@ -11,13 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 const logger = require("node-yolog");
 const server_1 = require("../server/server");
 const hooks_1 = require("../hooks/hooks");
-hooks_1.defineHook("socket_api__event_listener");
-hooks_1.defineHook("socket_api__get_running_app_list");
+hooks_1.defineHook("tuxRemote/socket/eventListener");
 class SocketApi {
     constructor() {
         this.events = [
-            hooks_1.defineHook("socket_api__running_apps"),
-            hooks_1.defineHook("socket_api__log")
+            hooks_1.defineHook("tuxRemote/log")
         ];
     }
     static getInstance() {
@@ -27,37 +25,27 @@ class SocketApi {
         return SocketApi.instance;
     }
     defineEventListener() { return this.events; }
-    onRunningApps(socket, args) {
-        let running_app_list = hooks_1.invoke("socket_api__get_running_app_list");
-        socket.emit("socket_api__running_apps", running_app_list);
-    }
     log(socket, args) {
         for (let i in args) {
-            logger.info("socket_api__log:", args[i]);
+            logger.info("tuxRemote/log/ ", args[i]);
         }
     }
 }
 __decorate([
-    hooks_1.hook("socket_api__event_listener", () => SocketApi.getInstance()),
+    hooks_1.hook("tuxRemote/socket/eventListener", () => SocketApi.getInstance()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], SocketApi.prototype, "defineEventListener", null);
 __decorate([
-    hooks_1.hook("socket_api__running_apps"),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
-], SocketApi.prototype, "onRunningApps", null);
-__decorate([
-    hooks_1.hook("socket_api__log"),
+    hooks_1.hook("tuxRemote/log"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SocketApi.prototype, "log", null);
 server_1.io.on("connection", function (socket) {
     logger.info("Client connected.");
-    let result = hooks_1.invoke("socket_api__event_listener");
+    let result = hooks_1.invoke("tuxRemote/socket/eventListener");
     for (let i in result) {
         let event = result[i];
         socket.on(event, (...args) => hooks_1.invoke(event, socket, args));

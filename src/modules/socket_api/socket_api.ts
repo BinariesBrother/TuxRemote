@@ -2,8 +2,7 @@ import * as logger  from "node-yolog";
 import {io} from "../server/server";
 import {invoke, defineHook, hook} from "../hooks/hooks";
 
-defineHook("socket_api__event_listener");
-defineHook("socket_api__get_running_app_list");
+defineHook("tuxRemote/socket/eventListener");
 
 class SocketApi {
 
@@ -13,8 +12,8 @@ class SocketApi {
 
   private constructor() {
     this.events = [
-      defineHook("socket_api__running_apps"),
-      defineHook("socket_api__log")
+      // defineHook("socket_api__running_apps"),
+      defineHook("tuxRemote/log")
     ];
   }
 
@@ -25,20 +24,20 @@ class SocketApi {
     return SocketApi.instance;
   }
 
-  @hook("socket_api__event_listener", () => SocketApi.getInstance())
+  @hook("tuxRemote/socket/eventListener", () => SocketApi.getInstance())
   defineEventListener() { return this.events; }
 
-  @hook("socket_api__running_apps")
-  onRunningApps(socket, args) {
-    // Allow other modules to populate the running app list.
-    let running_app_list = invoke("socket_api__get_running_app_list");
-    socket.emit("socket_api__running_apps", running_app_list);
-  }
+  // @hook("socket_api__running_apps")
+  // onRunningApps(socket, args) {
+  //   // Allow other modules to populate the running app list.
+  //   let running_app_list = invoke("socket_api__get_running_app_list");
+  //   socket.emit("socket_api__running_apps", running_app_list);
+  // }
 
-  @hook("socket_api__log")
+  @hook("tuxRemote/log")
   log(socket, args) {
     for (let i in args) {
-      logger.info("socket_api__log:", args[i]);
+      logger.info("tuxRemote/log/ ", args[i]);
     }
   }
 }
@@ -46,7 +45,7 @@ class SocketApi {
 io.on("connection", function(socket) {
   logger.info("Client connected.");
 
-  let result = invoke("socket_api__event_listener");
+  let result = invoke("tuxRemote/socket/eventListener");
   for (let i in result) {
     let event = result[i];
     socket.on(event, (...args) => invoke(event, socket, args));
