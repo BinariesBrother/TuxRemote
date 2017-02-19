@@ -5,13 +5,13 @@
 <link rel="import" href="/bower_components/paper-item/paper-item-shared-styles.html">
 <link rel="import" href="/bower_components/paper-item/paper-item-body.html">
 
-<link rel="import" href="shared-styles.html">
+<link rel="import" href="app-theme.html">
 
 <!-- "Extends" paper-icon-item component -->
 <dom-module id="app-item">
   <template>
     <style include="paper-item-shared-styles"></style>
-    <style include="shared-styles">
+    <style include="app-theme">
       :host {
         @apply(--layout-horizontal);
         @apply(--layout-center);
@@ -20,14 +20,6 @@
         @apply(--paper-item);
         @apply(--paper-icon-item);
 
-        --image-radius: 50%;
-        --image-size: 42px;
-
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        -o-user-select: none;
-        user-select: none;
       }
 
       .content-icon {
@@ -38,19 +30,9 @@
         @apply(--paper-item-icon);
       }
 
-      iron-image {
-        background-color: var(--paper-grey-400);
-        display: inline-block;
-        width: var(--image-size);
-        height: var(--image-size);
-        border-radius: var(--image-radius);
-        --iron-image-placeholder: {
-          border-radius: var(--image-radius);
-        }
-      }
     </style>
     <div class="content-icon">
-      <iron-image sizing="cover" preload fade
+      <iron-image class="app-icon" sizing="cover" preload fade
           src="{{application.icon}}" item-icon></iron-image>
     </div>
     <paper-item-body two-line>

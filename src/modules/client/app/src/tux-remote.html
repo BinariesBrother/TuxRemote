@@ -4,31 +4,36 @@
 <link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
-<!-- <link rel="import" href="/bower_components/app-route/app-location.html"> -->
-<!-- <link rel="import" href="/bower_components/app-route/app-route.html"> -->
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
-<!-- <link rel="import" href="/bower_components/iron-selector/iron-selector.html"> -->
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-ripple/paper-ripple.html">
 
-<link rel="import" href="shared-styles.html">
+<link rel="import" href="app-theme.html">
 <link rel="import" href="app-icons.html">
 <link rel="import" href="tux-drawer.html">
 <link rel="import" href="app-view.html">
 
 <dom-module id="tux-remote">
   <template>
-    <style include="shared-styles">
+    <style include="app-theme">
       :host {
         display: block;
       }
+      .spacer {
+        margin-left: 16px;
+      }
+      #toolbarRipple {
+        color: black;
+      }
+
+      /* TODO Remove css below */
+      iron-pages {
+        height: 300vh;
+      }
+
     </style>
-    <!-- <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route
-        route="{{route}}"
-        pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route> -->
-    <app-drawer-layout fullbleed>
+
+    <app-drawer-layout id="drawerLayout" fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer" swipe-open no-focus-trap>
         <tux-drawer selected="{{selected}}"></tux-drawer>
@@ -42,6 +47,12 @@
             <paper-icon-button icon="app-icons:menu" drawer-toggle></paper-icon-button>
             <div main-title>TuxRemote</div>
           </app-toolbar>
+          <app-toolbar sticky>
+            <iron-image id="appToolbarImage" class="app-icon" sizing="cover" preload fade
+              src="{{_getIcon(selected)}}"></iron-image>
+            <div class="spacer">{{_getTitle(selected)}}</div>
+          </app-toolbar>
+          <paper-ripple id="toolbarRipple" style="pointer-events: none;"></paper-ripple>
         </app-header>
 
         <iron-pages
@@ -61,31 +72,29 @@
       is: 'tux-remote',
 
       properties: {
-        // page: {
-        //   type: String,
-        //   reflectToAttribute: true,
-        //   observer: '_pageChanged',
-        // },
         selected: {
           type: Object,
           value: {},
-          // observer: '_onSelecedChanged'
+          observer: '_onSelectedChanged',
         },
       },
 
-      observers: [
-        // '_routePageChanged(routeData.page)',
-      ],
-
-      // _onAppSelect: function(event, detail) {
-      //   console.log(detail);
-      // },
-
-      _onSelecedChanged: function(selected) {
-        if (selected.item != undefined && selected.item.localName == 'app-item') {
-          // var resolvedPageUrl = this.resolveUrl('app-view.html');
-          // this.importHref(resolvedPageUrl, null, this._show404, true);
+      _onSelectedChanged: function() {
+        // Close the drawer
+        if (this.$.drawerLayout.narrow) {
+          this.$.drawer.close();
         }
+        // Animate the app-header ripple
+        var rect = this.$.appToolbarImage.getBoundingClientRect();
+        this.$.toolbarRipple.downAction({
+          detail: {
+            x: rect.left + (rect.width / 2),
+            y: rect.top + (rect.height / 2)
+          }
+        });
+        this.async(function() {
+          this.$.toolbarRipple.upAction();
+        }, 500);
       },
 
       _computeSelected: function(selected) {
@@ -102,24 +111,19 @@
         return {};
       },
 
-      // _routePageChanged: function(page) {
-      //   this.page = page || 'apps';
-      //
-      //   if (!this.$.drawer.persistent) {
-      //     this.$.drawer.close();
-      //   }
-      // },
-
-      // _pageChanged: function(page) {
-      //   // Load page import on demand. Show 404 page if fails
-      //   var resolvedPageUrl = this.resolveUrl('view-' + page + '.html');
-      //   this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      // },
-
-      _show404: function() {
-        this.selected = {};
+      _getIcon: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return selected.item.application.icon;
+        }
+        return '';
       },
 
+      _getTitle: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return selected.item.application.name;
+        }
+        return '';
+      },
     });
   </script>
 </dom-module>
