@@ -31,7 +31,7 @@
         </app-toolbar>
       </app-header>
       <iron-pages selected="[[current.type]]" attr-for-selected="name">
-        <app-list name="app-list" selected={{selected}}></app-list>
+        <app-list id="appList" name="app-list" selected={{selected}}></app-list>
       </iron-pages>
     </app-header-layout>
   </template>
@@ -71,6 +71,7 @@
 
       _switchToAppList: function() {
         this._switch('app-list');
+        this.$.appList.focusSelectedApp();
       },
     });
   </script>

@@ -19,7 +19,17 @@
 
         @apply(--paper-item);
         @apply(--paper-icon-item);
+      }
 
+      :host(.iron-selected):before {
+        @apply(--layout-fit);
+
+        background: currentColor;
+        content: '';
+        opacity: var(--dark-divider-opacity);
+        pointer-events: none;
+
+        @apply(--paper-item-focused-before);
       }
 
       .content-icon {

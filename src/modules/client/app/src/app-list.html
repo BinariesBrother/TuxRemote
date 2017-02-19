@@ -74,6 +74,10 @@
         this.set('selected', item);
       },
 
+      focusSelectedApp: function() {
+        this.$.list.selectedItem.focus();
+      },
+
       // _onSelecedChanged: function(newValue, oldValue) {
       //   if (newValue.item != undefined && newValue.item.localName == 'app-item') {
       //     this.$.list.selected = this.$.list.indexOf(newValue.item);
