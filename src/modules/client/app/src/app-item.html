@@ -39,7 +39,7 @@
       <div>{{application.name}}</div>
       <!-- <div secondary>{{description}}</div> -->
     </paper-item-body>
-    <paper-ripple></paper-ripple><!-- fix image radius issue... -->
+    <paper-ripple id="ripple" noink></paper-ripple><!-- fix image radius issue... -->
   </template>
   <script>
     Polymer({
@@ -55,6 +55,17 @@
           value: {},
         },
       },
+
+      listeners: {
+        'tap': '_onTap',
+      },
+
+      _onTap: function(event) {
+        this.$.ripple.downAction(event);
+        this.async(function() {
+          this.$.ripple.upAction();
+        }, 500);
+      }
     });
   </script>
 </dom-module>
