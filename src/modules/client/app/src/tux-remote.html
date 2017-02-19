@@ -31,12 +31,6 @@
       <!-- Drawer content -->
       <app-drawer id="drawer" swipe-open no-focus-trap>
         <tux-drawer on-app-select="_onAppSelect"></tux-drawer>
-        <!-- <app-toolbar>Menu</app-toolbar>
-        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="apps" href="#/apps">Applications</a>
-          <a name="view2" href="#/view2">New Application</a>
-          <a name="view3" href="#/view3">Settings</a>
-        </iron-selector> -->
       </app-drawer>
 
       <!-- Main content -->
@@ -49,14 +43,14 @@
           </app-toolbar>
         </app-header>
 
-        <!-- <iron-pages
+        <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
             fallback-selection="notfound"
             role="main">
           <view-apps name="apps"></view-apps>
           <view-notfound name="notfound"></view-notfound>
-        </iron-pages> -->
+        </iron-pages>
       </app-header-layout>
     </app-drawer-layout>
   </template>
@@ -66,38 +60,39 @@
       is: 'tux-remote',
 
       properties: {
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged',
-        },
+        // page: {
+        //   type: String,
+        //   reflectToAttribute: true,
+        //   observer: '_pageChanged',
+        // },
       },
 
       observers: [
-        '_routePageChanged(routeData.page)',
+        // '_routePageChanged(routeData.page)',
       ],
-
-      _routePageChanged: function(page) {
-        this.page = page || 'apps';
-
-        if (!this.$.drawer.persistent) {
-          this.$.drawer.close();
-        }
-      },
-
-      _pageChanged: function(page) {
-        // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('view-' + page + '.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      },
-
-      _showPage404: function() {
-        this.page = 'notfound';
-      },
 
       _onAppSelect: function(event, detail) {
         console.log(detail);
-      }
+      },
+
+      // _routePageChanged: function(page) {
+      //   this.page = page || 'apps';
+      //
+      //   if (!this.$.drawer.persistent) {
+      //     this.$.drawer.close();
+      //   }
+      // },
+
+      // _pageChanged: function(page) {
+      //   // Load page import on demand. Show 404 page if fails
+      //   var resolvedPageUrl = this.resolveUrl('view-' + page + '.html');
+      //   this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      // },
+
+      // _showPage404: function() {
+      //   this.page = 'notfound';
+      // },
+
     });
   </script>
 </dom-module>

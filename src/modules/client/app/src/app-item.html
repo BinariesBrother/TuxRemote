@@ -22,6 +22,12 @@
 
         --image-radius: 50%;
         --image-size: 42px;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
       }
 
       .content-icon {
@@ -45,11 +51,11 @@
     </style>
     <div class="content-icon">
       <iron-image sizing="cover" preload fade
-          src="{{icon}}" item-icon></iron-image>
+          src="{{application.icon}}" item-icon></iron-image>
     </div>
     <paper-item-body two-line>
-      <div>{{name}}</div>
-      <div secondary>{{description}}</div>
+      <div>{{application.name}}</div>
+      <!-- <div secondary>{{description}}</div> -->
     </paper-item-body>
     <paper-ripple></paper-ripple><!-- fix image radius issue... -->
   </template>
@@ -62,9 +68,10 @@
       ],
 
       properties: {
-        name: '',
-        description: '',
-        icon: '',
+        application: {
+          type: Object,
+          value: {},
+        },
       },
     });
   </script>

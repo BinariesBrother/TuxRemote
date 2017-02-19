@@ -30,9 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <paper-listbox on-iron-select="_onItemSelect">
       <template is="dom-repeat" items="{{applications}}" as="application">
-        <app-item
-          name="{{application.name}}"
-          icon="{{application.icon}}"></app-item>
+        <app-item application="{{application}}"></app-item>
       </template>
     </paper-listbox>
   </template>
