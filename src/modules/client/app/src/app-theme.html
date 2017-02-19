@@ -12,12 +12,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="/bower_components/paper-styles/color.html">
 
 <!-- shared styles for all views -->
-<dom-module id="shared-styles">
+<dom-module id="app-theme">
   <template>
     <style>
       :root {
         --app-primary-color: var(--paper-grey-800);
         --app-secondary-color: black;
+
+        --app-icon-radius: 50%;
+        --app-icon-size: 42px;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
       }
       [hidden] {
         display: none;
@@ -32,6 +41,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app-header paper-icon-button {
         color: var(--paper-grey-100);
         --paper-icon-button-ink-color: white;
+      }
+
+      iron-image.app-icon {
+        background-color: transparent;
+        display: inline-block;
+        width: var(--app-icon-size);
+        height: var(--app-icon-size);
+        border-radius: var(--app-icon-radius);
+        --iron-image-placeholder: {
+          border-radius: var(--app-icon-radius);
+        }
       }
     </style>
   </template>
