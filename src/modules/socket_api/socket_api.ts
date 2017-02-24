@@ -4,6 +4,14 @@ import {invoke, defineHook, hook} from "../hooks/hooks";
 
 defineHook("tuxRemote/socket/eventListener");
 
+/**
+ * Define SocketApi singleton class.
+ * Also define some hooks:
+ *   - tuxRemote/socket/eventListener
+ *   - tuxRemote/log
+ *
+ * @class SocketApi
+ */
 class SocketApi {
 
   static instance: SocketApi;
@@ -25,7 +33,7 @@ class SocketApi {
   }
 
   @hook("tuxRemote/socket/eventListener", () => SocketApi.getInstance())
-  defineEventListener() { return this.events; }
+  defineEventListener() { return this.events;}
 
   // @hook("socket_api__running_apps")
   // onRunningApps(socket, args) {
