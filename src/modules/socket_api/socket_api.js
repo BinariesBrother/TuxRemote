@@ -40,7 +40,7 @@ __decorate([
 __decorate([
     hooks_1.hook("tuxRemote/log"),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Array]),
     __metadata("design:returntype", void 0)
 ], SocketApi.prototype, "log", null);
 server_1.io.on("connection", function (socket) {

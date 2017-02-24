@@ -1,4 +1,4 @@
-import * as logger  from "node-yolog";
+import * as logger from "node-yolog";
 import {io} from "../server/server";
 import {invoke, defineHook, hook} from "../hooks/hooks";
 
@@ -35,20 +35,20 @@ class SocketApi {
   // }
 
   @hook("tuxRemote/log")
-  log(socket, args) {
+  log(socket: any, args: any[]) {
     for (let i in args) {
       logger.info("tuxRemote/log/ ", args[i]);
     }
   }
 }
 
-io.on("connection", function(socket) {
+io.on("connection", function(socket: any) {
   logger.info("Client connected.");
 
   let result = invoke("tuxRemote/socket/eventListener");
   for (let i in result) {
     let event = result[i];
-    socket.on(event, (...args) => invoke(event, socket, args));
+    socket.on(event, (...args: any[]) => invoke(event, socket, args));
   }
 
 });
