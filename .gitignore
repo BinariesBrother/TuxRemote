@@ -70,3 +70,7 @@ jspm_packages
 #Installed components via bower
 bower_components/
 # End of https://www.gitignore.io/api/node,polymer,bower
+
+
+### Project specifics ###
+src/*.js
