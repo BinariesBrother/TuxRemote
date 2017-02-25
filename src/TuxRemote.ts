@@ -1,6 +1,6 @@
 import * as program from "commander";
 import * as logger  from "node-yolog";
-
+import * as model from "./modules/model/model";
 import "reflect-metadata";
 
 import {ModuleManager} from "./moduleManager";
