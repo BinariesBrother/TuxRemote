@@ -1,8 +1,9 @@
 import * as program from "commander";
 import * as logger  from "node-yolog";
+import {ModuleManager} from "./moduleManager";
 import "reflect-metadata";
 
-let ModuleManager = require("./moduleManager.js");
+// let ModuleManager = require("./moduleManager.js");
 
 /**
  * Enable/disable logger with commander options
