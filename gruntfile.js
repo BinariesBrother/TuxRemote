@@ -17,8 +17,8 @@ module.exports = function(grunt) {
     ts: {
       app: {
         files: [{
-          src: ["src/\*\*/\*.ts", "!src/.baseDir.ts"],
-          dest: "./src"
+          src: ["src/\*\*/\*.ts", ["!src/.baseDir.ts", "!src/static"]],
+          dest: "./dist"
         }],
         options: {
           module: "commonjs",
@@ -34,6 +34,10 @@ module.exports = function(grunt) {
       ts: {
         files: ["src/\*\*/\*.ts"],
         tasks: ["ts"]
+      },
+      copy: {
+        files: ["src/\*\*/\*", "!src/\*\*/\*.ts"],
+        tasks: ["copy"]
       }
     }
   });
