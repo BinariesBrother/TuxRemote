@@ -14,13 +14,6 @@ let static_dirs = [
   __dirname + "/app/",
 ];
 
-logger.debug("Static folders are:");
-for (let i in static_dirs) {
-  app.use(express.static(static_dirs[i]));
-  logger.debug(static_dirs[i]);
-}
-
-
 /**
  * Provide hooks to allow other modules to include your own admin menu and Polymer component view.
  *
@@ -61,4 +54,12 @@ class ClientSocketApi {
     logger.debug(menu_items);
   }
 
+}
+
+export function init() {
+  logger.debug("Static folders are:");
+  for (let i in static_dirs) {
+    app.use(express.static(static_dirs[i]));
+    logger.debug(static_dirs[i]);
+  }
 }

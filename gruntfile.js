@@ -37,7 +37,7 @@ module.exports = function(grunt) {
       },
       copy: {
         files: ["src/\*\*/\*", "!src/\*\*/\*.ts"],
-        tasks: ["copy"]
+        tasks: ["newer:copy"]
       }
     }
   });
@@ -45,6 +45,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-ts");
+  grunt.loadNpmTasks('grunt-newer');
 
   grunt.registerTask("default", [
     "ts",
@@ -52,10 +53,6 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask("deploy", [
-    "copy"
-  ]);
-
-  grunt.registerTask("createdb", [
     "copy"
   ]);
 

@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as logger from 'node-yolog';
 /**
  * Common class to represent a TuxRemote module.
  * json file like:
@@ -7,7 +9,6 @@
  *    ]
  *  }
  */
-import * as fs from "fs";
 
 /**
  * Short class to represent a module.
@@ -41,32 +42,61 @@ export class ModuleManager {
 
   public modulePaths: string[];
   public modules: ModuleInfo[];
+  public moduleInstances: Object;
 
   constructor() {
+    this.moduleInstances = {};
     this.modulePaths = [
       __dirname + '/modules',
     ];
     this.modules = [];
     //populate this.modules
     this.getModules();
-    // console.log(this.modules);
   }
 
-  loadAll() {
+  /**
+   * Call the require function for each modules.
+   * Populate the moduleInstances with instance retruned by the require call.
+   *
+   * @memberOf ModuleManager
+   */
+  public loadAll() {
     for (let module in this.modules) {
       if (this.modules.hasOwnProperty(module)) {
-        require(this.modules[module].jsPath);
+        this.load(this.modules[module]);
       }
     }
   }
 
-  _addModule(module: ModuleInfo) {
+  public load(module: ModuleInfo) {
+    logger.info("# Load module:", module.name);
+    this.moduleInstances[module.name] = require(module.jsPath);
+  }
+
+  /**
+   * Call the init function fro each loaded modules.
+   *
+   * @memberOf ModuleManager
+   */
+  public initAll() {
+    for (let module in this.moduleInstances) {
+      if (this.moduleInstances.hasOwnProperty(module)) {
+        let instance = this.moduleInstances[module];
+        if (instance.hasOwnProperty('init') && typeof instance.init == 'function') {
+          logger.info("# Initialize module:", module);
+          this.moduleInstances[module].init();
+        }
+      }
+    }
+  }
+
+  protected _addModule(module: ModuleInfo) {
     if (!this.findModuleByName(module.name)) {
       this.modules.push(module);
     }
   }
 
-  getModules() {
+  public getModules() {
     for (let i in this.modulePaths) {
       let path = this.modulePaths[i];
       let modulesName = this._getModulesName(path);
@@ -77,7 +107,7 @@ export class ModuleManager {
   /**
    * Get modules recursively
    */
-  _getModules(modulesName: string[], path: string) {
+  protected _getModules(modulesName: string[], path: string) {
     for (let j in modulesName) {
       let name = modulesName[j];
       let module = new ModuleInfo(name, path)
@@ -92,7 +122,7 @@ export class ModuleManager {
     }
   }
 
-  _getModulesName(path: string) {
+  protected _getModulesName(path: string) {
     try {
       return fs.readdirSync(path);
     }
@@ -101,7 +131,7 @@ export class ModuleManager {
     }
   }
 
-  findModuleByName(name: string) {
+  public findModuleByName(name: string) {
     for(let i in this.modules) {
       if (name == this.modules[i].name) {
         return true;

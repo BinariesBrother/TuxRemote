@@ -35,3 +35,4 @@ else {
 
 let mManager = new ModuleManager();
 mManager.loadAll();
+mManager.initAll();
