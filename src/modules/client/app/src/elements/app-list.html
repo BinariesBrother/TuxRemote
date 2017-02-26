@@ -75,7 +75,9 @@
       },
 
       focusSelectedApp: function() {
-        this.$.list.selectedItem.focus();
+        if (this.$.list.selectedItem) {
+          this.$.list.selectedItem.focus();
+        }
       },
 
       // _onSelecedChanged: function(newValue, oldValue) {
