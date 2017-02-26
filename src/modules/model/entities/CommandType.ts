@@ -1,5 +1,5 @@
-import {Entity, PrimaryColumn, ManyToMany} from "typeorm";
-import {View} from "./View"
+import {Entity, PrimaryColumn, OneToMany} from "typeorm";
+import {ViewCommandType} from "./ViewCommandType"
 import {Command} from "./Command"
 
 @Entity()
@@ -8,11 +8,7 @@ export class CommandType {
   @PrimaryColumn()
   name: string;
 
-  @ManyToMany(type => View, view => view.commandTypes, {  // note: we will create "albums" property in the Photo class below
-    cascadeInsert: true, // allow to insert a new photo on album save
-    cascadeUpdate: true // allow to update a photo on album save
-  })
-  views: View[] = [];
-
-  commands: Command[] = [];
+  
+  @OneToMany(type => ViewCommandType, viewCommandType => viewCommandType.commandType)
+  viewCommandTypes: ViewCommandType[] = [];
 }

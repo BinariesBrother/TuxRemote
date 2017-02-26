@@ -9,6 +9,9 @@ export class Application {
   id: string;
 
   @Column()
+  open: Command;
+
+  @Column()
   name: string;
 
   @Column({ nullable: true })

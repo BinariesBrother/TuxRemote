@@ -1,3 +1,4 @@
+import { ApplicationDto } from './dto/ApplicationDto';
 import {Command} from "./entities/Command";
 import {Application} from "./entities/Application";
 import {CommandRepository}  from "./repository/CommandRepository"
@@ -5,6 +6,7 @@ import {ApplicationRepository}  from "./repository/ApplicationRepository"
 import {CommandTypeRepository}  from "./repository/CommandTypeRepository"
 import {ViewRepository}  from "./repository/ViewRepository"
 import * as connectionManager from "./repository/Connection";
+import {deserialize, serialize} from 'json-typescript-mapper';
 
 
 async function init() : Promise<Object> {
@@ -157,8 +159,9 @@ return transaction;
 
 init();
 
-
-/*
-
-  
- */
+connectionManager.session().then( connectionMere=>
+  connectionMere.entityManager.transaction(async connection=>{
+    ApplicationRepository.findAll(connection).then(result=>{
+      result.forEach(app=>console.log(serialize(ApplicationDto.fromApplication(app))));
+    });
+  }));

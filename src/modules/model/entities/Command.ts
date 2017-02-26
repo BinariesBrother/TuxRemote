@@ -1,7 +1,8 @@
-import {Entity, TableInheritance, Index, Column, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Entity, TableInheritance, Index, Column, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {View} from "./View";
 import {Application} from "./Application";
 import {CommandType} from "./CommandType";
+import {ViewCommandType} from "./ViewCommandType";
 
 
 @Entity()
@@ -26,7 +27,7 @@ export class Command {
   @ManyToOne(type => Application, application => application.commands)
   application: Application;
 
-  @ManyToOne(type => CommandType, commandType => commandType.commands)
-  commandType: CommandType;
+  @OneToMany(type => ViewCommandType, viewCommandType => viewCommandType.commandType)
+  viewCommandTypes: ViewCommandType[] = [];
 
 }
