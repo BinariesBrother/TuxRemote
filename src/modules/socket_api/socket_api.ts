@@ -50,13 +50,16 @@ class SocketApi {
   }
 }
 
-io.on("connection", function(socket: any) {
-  logger.info("Client connected.");
+export function init() {
 
-  let result = invoke("tuxRemote/socket/eventListener");
-  for (let i in result) {
-    let event = result[i];
-    socket.on(event, (...args: any[]) => invoke(event, socket, args));
-  }
+  io.on("connection", function(socket: any) {
+    logger.info("Client connected.");
 
-});
+    let result = invoke("tuxRemote/socket/eventListener");
+    for (let i in result) {
+      let event = result[i];
+      socket.on(event, (...args: any[]) => invoke(event, socket, args));
+    }
+  });
+
+}

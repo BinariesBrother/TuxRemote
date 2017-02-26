@@ -42,3 +42,7 @@ export function defineHook(name: string) {
   keyring.createRing(name);
   return name;
 }
+
+export function init() {
+
+}
