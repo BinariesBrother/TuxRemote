@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryColumn, ManyToOne} from "typeorm";
+import {Entity, Column, PrimaryColumn, ManyToOne, OneToMany} from "typeorm";
 import {View} from "./View"
 import {Command} from "./Command"
 
@@ -8,7 +8,7 @@ export class Application {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @ManyToOne(type => Command, Command => Command.applications)
   open: Command;
 
   @Column()
@@ -20,6 +20,7 @@ export class Application {
   @ManyToOne(type => View, view => view.applications)
   view: View;
 
+  @OneToMany(type => Command, command => command.application)
   commands: Command[] = [];
 
 }

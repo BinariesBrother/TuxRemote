@@ -52,7 +52,6 @@ export class CommandRepository {
       com.icon = command.icon;
       com.shell = command.shell;
       promiseAll.push(ApplicationRepository.findOne(transaction, command.applicationId).then(app => {
-        console.log(app.name, command.name);
         com.application = app;
         return CommandRepository.save(transaction, com);
       }));

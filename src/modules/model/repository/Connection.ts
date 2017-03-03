@@ -22,4 +22,9 @@ export function session() {
   }
   return connection;
 }
+
+export async function transaction(){
+  return session().then(connectionMere=>connectionMere.entityManager.transaction);
+}
+  
  

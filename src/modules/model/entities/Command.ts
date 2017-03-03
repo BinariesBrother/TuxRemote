@@ -6,7 +6,7 @@ import {ViewCommandType} from "./ViewCommandType";
 
 
 @Entity()
-@Index("index_item_sequence", ['name', 'view'], { unique: true })
+@Index("index_item_sequence", ['name', 'application'], { unique: true })
 export class Command {
 
   @PrimaryGeneratedColumn()
@@ -21,13 +21,14 @@ export class Command {
   @Column({ nullable: true })
   shell: string;
 
-  @ManyToOne(type => View, view => view.commands)
-  view: View;
-
   @ManyToOne(type => Application, application => application.commands)
   application: Application;
 
   @OneToMany(type => ViewCommandType, viewCommandType => viewCommandType.commandType)
   viewCommandTypes: ViewCommandType[] = [];
+
+
+  @OneToMany(type => Application, application => application.commands)
+  applications: Application[];
 
 }

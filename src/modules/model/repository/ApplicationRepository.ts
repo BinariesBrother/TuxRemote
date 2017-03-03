@@ -7,19 +7,39 @@ export class ApplicationRepository {
 
   public static async findAll(transaction: EntityManager): Promise<Application[]> {
     return transaction.getRepository(Application)
-      .find();
+        .createQueryBuilder("application")
+        .leftJoinAndSelect("application.open", "open")
+        .leftJoinAndSelect("application.commands", "command")
+        .leftJoinAndSelect("application.view", "view")
+        .leftJoinAndSelect("view.viewCommandTypes", "viewCommandType")
+        .leftJoinAndSelect("viewCommandType.commandType", "commandType")
+        .getMany();
   }
+
+  public static async findAllById(transaction: EntityManager, id:String): Promise<Application> {
+      return transaction.getRepository(Application)
+        .createQueryBuilder("application")
+        .leftJoinAndSelect("application.open", "open")
+        .leftJoinAndSelect("application.commands", "command")
+        .leftJoinAndSelect("application.view", "view")
+        .leftJoinAndSelect("view.viewCommandTypes", "viewCommandType")
+        .leftJoinAndSelect("viewCommandType.commandType", "commandType")
+        .where("application.id = :id",{id:id})
+        .getOne();
+  }
+  
 
   public static async findOne(transaction: EntityManager, applicationId: String): Promise<Application> {
     return transaction.getRepository(Application)
       .createQueryBuilder("application")
-      .where("application.id LIKE :applicationId"
+      .where("application.id = :applicationId"
       , { applicationId: applicationId }) 
       .getOne();
   }
 
 
   public static async save(transaction: EntityManager, application: Application): Promise<Application> {
+    application.id = application.id.toUpperCase();
     return transaction
       .persist(application);
   }

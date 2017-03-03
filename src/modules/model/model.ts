@@ -20,15 +20,12 @@ async function init() : Promise<Object> {
       { 'name': 'previous' },
       { 'name': 'set_url' }
     ]);
-    console.log(result);
 
     result = await ViewRepository.init(connection, [
       { 'name': 'Default', commandTypes: [] },
       { 'name': 'Player', commandTypes: ['play', 'pause', 'stop', 'next', 'previous'] },
       { 'name': 'Navigator', commandTypes: ['next', 'previous', 'set_url'] }
     ]);
-    
-    console.log(result);
 
     result = await ApplicationRepository.init(connection, [
       {
@@ -69,10 +66,8 @@ async function init() : Promise<Object> {
       }
     ]);
 
-  console.log(result);
 
-
-    result = CommandRepository.init(connection ,[
+    result = await CommandRepository.init(connection ,[
       {
         name: 'Next Tab',
         type: undefined,
@@ -151,17 +146,19 @@ async function init() : Promise<Object> {
         icon: undefined
       }
 
+
     ]);
+
+    console.log("end bd!");
+
+    ApplicationRepository.findAll(connection).then(result=>{
+      result.forEach(app=>console.log(JSON.stringify(serialize(ApplicationDto.fromApplication(app)))));
+    }).catch(error=>console.log(error));
+
+
     return result;
   });
 return transaction;
 };
 
-init();
-
-connectionManager.session().then( connectionMere=>
-  connectionMere.entityManager.transaction(async connection=>{
-    ApplicationRepository.findAll(connection).then(result=>{
-      result.forEach(app=>console.log(serialize(ApplicationDto.fromApplication(app))));
-    });
-  }));
+//init();

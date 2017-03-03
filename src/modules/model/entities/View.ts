@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, OneToMany, JoinTable} from "typeorm";
+import {Entity, PrimaryColumn, OneToMany, JoinTable, ManyToOne} from "typeorm";
 import {Command} from "./Command"
 import {Application} from "./Application"
 import {ViewCommandType} from "./ViewCommandType"
@@ -12,7 +12,7 @@ export class View {
   
   @OneToMany(type => ViewCommandType, viewCommandType => viewCommandType.view)
   viewCommandTypes: ViewCommandType[] = [];
-
-  commands: Command[] = [];
+  
+  @ManyToOne(type => Application, application => application.view)
   applications: Application[] = [];
 }
