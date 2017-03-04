@@ -67,7 +67,7 @@ export class OsController implements OsInterface{
 
   public onOpens(applications: ApplicationDto[]): Promise<any>{
     if(applications.length>0){
-      console.log("open ", applications.map(app=>({name:app.name, id:app.id})), );
+      console.log("OPEN ", applications.map(app=>({name:app.name, id:app.id})), );
     }
     return new Promise(resolve=>resolve());
   }

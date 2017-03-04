@@ -68,9 +68,7 @@ export class ApplicationDto {
   }
 
   public addWindow(app: any){
-    console.log("newWindowDto", app.title)
     let result : WindowDto = new WindowDto();
-    console.log("createWindowDto", app.title)
     result.title = app.title;
     result.id = app.windowId;
     this.windows[app.windowId] = result;
@@ -106,9 +104,18 @@ export class ApplicationDto {
       if(origine[applicationId]){
         let temp = origine[applicationId].merge(compare[applicationId]);
         let diff : {[id:string]: WindowDto[]}= {};
-        result[applicationId]=temp["opened"];
-        result[applicationId]=temp["closed"];
-        result[applicationId]=temp["changed"];
+        if((temp["opened"].length>0 || temp["closed"].length>0 || temp["changed"].length>0) && !result[applicationId]){
+          result[applicationId] = {};
+        }
+        if(temp["opened"].length>0){
+          result[applicationId]["opened"]=temp["opened"];
+        }
+        if(temp["closed"].length>0){
+          result[applicationId]["closed"]=temp["closed"];
+        }
+        if(temp["changed"].length>0){
+          result[applicationId]["changed"]=temp["changed"];
+        }
       }
     });
     return result;

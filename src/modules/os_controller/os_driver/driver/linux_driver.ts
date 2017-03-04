@@ -70,7 +70,6 @@ export class LinuxDriver implements OsDriver {
       let str = apps[i].replace(/"/g, '\\"').replace(/\(\(/g, '"');
       let app = JSON.parse(str);
       app.id = app.id.toUpperCase();
-      //console.log(app);
       if(!result[app.id]){
         result[app.id] = ApplicationDto.fromApplicationJson(app);
       }
@@ -84,15 +83,22 @@ export class LinuxDriver implements OsDriver {
     if (stdout==="") { return; }
     let newRun: {[id:string]:ApplicationDto} = this.readApplication(stdout);
     let diff = ApplicationDto.mergeApplciations(this.oldRun, newRun);
-    
+
     let openedApplications : ApplicationDto[] = Object.keys(newRun).map(id=>{
       return this.oldRun[id]?undefined:newRun[id];
     }).filter(nonNull=>nonNull);
+    
     let killedApplications : ApplicationDto[] = Object.keys(this.oldRun).map(id=>{
       return newRun[id]?undefined:newRun[id];
     }).filter(nonNull=>nonNull);
-    let changedApplications : ApplicationDto[] = Object.keys(diff).map(id=>this.oldRun[id]);
     
+    let changedApplications : ApplicationDto[] = Object.keys(diff)
+      .map(id=>this.oldRun[id]);
+
+    if(Object.keys(diff).length>0){
+          console.log("closed",killedApplications);
+    }
+
     let promise:Promise<any>[]=[];
     if(killedApplications.length>0){
       promise.push(this.killedApplications(killedApplications));
@@ -103,7 +109,10 @@ export class LinuxDriver implements OsDriver {
     if(openedApplications.length>0){
       promise.push(this.openedApplications(openedApplications));
     }
-    Promise.all(promise).then(result=>this.liberateToken())
+    Promise.all(promise).then(result=>{
+      
+      this.liberateToken();
+    }).catch(error=>console.log(error));
   }
   public async killedApplications(killedApplications: ApplicationDto[]){
     let closes = killedApplications.map(app=>app.id);
@@ -122,8 +131,8 @@ export class LinuxDriver implements OsDriver {
     let connectionMere = await connectionManager.session();
     connectionMere.entityManager.transaction(transaction=>{
       let appromise=[];
-      ids.forEach(id=>{
-        appromise.push(ApplicationRepository.findAllById(transaction, id).then(application=>{
+      ids.forEach(applicationId=>{
+        appromise.push(ApplicationRepository.findAllById(transaction, applicationId).then(application=>{
           let app: ApplicationDto;
           if(application){
             app = ApplicationDto.fromApplication(application);
@@ -131,9 +140,12 @@ export class LinuxDriver implements OsDriver {
             this.oldRun[app.id]=app;
           }
           return new Promise(resolve=>resolve(app));
-        }))
+        }).catch(error=>console.log(error)));
       })
-      Promise.all(appromise.filter(prom=>prom)).then(applicationsDto=>this.father.onOpens(applicationsDto.filter(prom=>prom)));
+      Promise.all(appromise.filter(prom=>prom))
+        .then(applicationsDto=>
+          this.father.onOpens(applicationsDto.filter(prom=>prom)))
+        .catch(error=>console.log(error));
     });
   }
 
