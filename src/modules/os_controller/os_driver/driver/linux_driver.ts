@@ -89,16 +89,16 @@ export class LinuxDriver implements OsDriver {
     }).filter(nonNull=>nonNull);
     
     let killedApplications : ApplicationDto[] = Object.keys(this.oldRun).map(id=>{
-      return newRun[id]?undefined:newRun[id];
+      return newRun[id]?undefined:this.oldRun[id];
     }).filter(nonNull=>nonNull);
     
     let changedApplications : ApplicationDto[] = Object.keys(diff)
       .map(id=>this.oldRun[id]);
-
-    if(Object.keys(diff).length>0){
-          console.log("closed",killedApplications);
-    }
-
+    /*console.log("run"
+      ,Object.keys(this.oldRun).map(id=>this.oldRun[id].name)
+      ,Object.keys(newRun).map(id=>newRun[id].id).filter(nonNull=>nonNull));
+    */
+    
     let promise:Promise<any>[]=[];
     if(killedApplications.length>0){
       promise.push(this.killedApplications(killedApplications));
@@ -109,7 +109,7 @@ export class LinuxDriver implements OsDriver {
     if(openedApplications.length>0){
       promise.push(this.openedApplications(openedApplications));
     }
-    Promise.all(promise).then(result=>{
+    return Promise.all(promise).then(result=>{
       
       this.liberateToken();
     }).catch(error=>console.log(error));
