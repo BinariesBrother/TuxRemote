@@ -1,0 +1,7 @@
+{
+  "deps": [
+    "server",
+    "socket_api",
+    "hooks"
+  ]
+}

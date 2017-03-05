@@ -20,6 +20,7 @@
     "@types/node": "^7.0.5",
     "commander": "^2.9.0",
     "express": "^4.14.1",
+    "json-typescript-mapper": "^1.1.1",
     "node-yolog": "^1.0.0",
     "reflect-metadata": "^0.1.9",
     "sequelize": "^3.30.1",

@@ -38,9 +38,14 @@ export function invoke(name: string, ...args: any[]) {
  * @param {string} name
  * @returns
  */
-export function defineHook(name: string) {
+export function defineHook(name: string): string {
   keyring.createRing(name);
   return name;
+}
+
+export function defineHooks(names: string[]): string[] {
+  names.forEach(name=>defineHook(name));
+  return names;
 }
 
 export function init() {

@@ -1,0 +1,1 @@
+wmctrl -lpx | awk 'BEGIN{FS=" "} NF>4 && $4!="N/A"{printf "{((windowId((:(("$1"((, ((id((:(("$4"((, ((title((:((" ;for(i=6; i<=NF; i++){printf $i" "}; printf "((}\n"} '
