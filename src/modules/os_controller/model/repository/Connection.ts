@@ -5,7 +5,10 @@ let connection = undefined;
 
 var fs = require('fs');
 var filePath = __dirname + "/../dbFile.sqlite";
-fs.unlinkSync(filePath);
+try {
+  fs.unlinkSync(filePath);
+} catch (error) {}
+
 
 export function session() {
   if (!connection) {
