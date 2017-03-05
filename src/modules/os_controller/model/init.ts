@@ -84,7 +84,40 @@ export function getJson(){
         "id":"SMPLAYER.SMPLAYER",
         "name":"SMPlayer",
         "view":"Player",
-        "commands":[]
+        "commands":[
+          {
+            "name":"Next",
+            "shell":"smplayer -send-action play_next"
+          },
+          {
+            "name":"Previous",
+            "shell":"smplayer -send-action play_prev"
+          },
+          {
+            "name":"Stop",
+            "shell":"smplayer -send-action stop"
+          },
+          {
+            "name":"FullScreen",
+            "shell":"smplayer -send-action fullScreen"
+          },
+          {
+            "name":"shuffle",
+            "shell":"smplayer -send-action pl_shuffle"
+          },
+          {
+            "name":"Repeat",
+            "shell":"smplayer -send-action repeat"
+          },
+          {
+            "name":"Acceleration",
+            "shell":"smplayer -send-action double_speed"
+          },
+          {
+            "name":"Deceleration",
+            "shell":"smplayer -send-action halve_speed"
+          }
+        ]
     }
   ]};
 }

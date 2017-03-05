@@ -80,7 +80,7 @@ function initApplication(connection, application){
           let ncommand: Command = new Command();
           ncommand.name = command.name;
           ncommand.shell = command.shell;
-          ncommand.applications = [app];
+          ncommand.application = app;
           promises.push(CommandRepository.save(connection, ncommand));
         })
         return Promise.all(promises);
