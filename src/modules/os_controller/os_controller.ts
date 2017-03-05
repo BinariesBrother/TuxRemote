@@ -3,6 +3,7 @@ import { OsInterface } from './os_driver/interface/os_interface';
 import { MousePosition } from './os_driver/mouse_position';
 import { osFactory } from './os_factory';
 import {exec} from 'child_process';
+import {init} from './model/model'
 import {Application} from './model/entities/Application';
 import {ApplicationDto} from './model/dto/ApplicationDto';
 import {ApplicationRepository} from './model/repository/ApplicationRepository';
@@ -22,7 +23,9 @@ export class OsController implements OsInterface{
   events: string[];
 
   private constructor(){
-    this.osDriver = osFactory.getOsDriver(this);
+    //this.initbd().then(result=>{
+      this.osDriver = osFactory.getOsDriver(this);
+    //});
     this.events = defineHooks([
       "tuxeRemote/osController/exec",
       "tuxeRemote/osController/getRunList",
@@ -42,6 +45,10 @@ export class OsController implements OsInterface{
     }
     return this.osController;
   }  
+
+  private initbd(): Promise<any>{
+    return init();
+  }
   
   /**
    * define hook annotations
@@ -123,19 +130,19 @@ export class OsController implements OsInterface{
 
   public onOpens(applications: ApplicationDto[]): Promise<any>{
     if(applications.length>0){
-      io.emit('tuxeremote/os_controller/focusChange',applications);
+      io.emit('tuxeremote/osController/focusChange',applications);
       console.log("OPEN ", applications.map(app=>({name:app.name, id:app.id})), );
     }
     return new Promise(resolve=>resolve());
   }
 
   public onChanges(applications: ApplicationDto[], diff:any){
-    io.emit('tuxeremote/os_controller/applicationsChanged',diff);
+    io.emit('tuxeremote/osController/applicationsChanged',diff);
     console.log("change ", applications, diff);
   }
 
   public onCloses(applications: String[]){
-    io.emit('tuxeremote/os_controller/applicationsClosed',applications);
+    io.emit('tuxeremote/osController/applicationsClosed',applications);
     console.log("close ", applications)
   }
 
@@ -159,7 +166,7 @@ export class OsController implements OsInterface{
   }
 
   private onFocusChangeLowLevel(socket: any, application: ApplicationDto){
-    socket.emit('tuxeremote/os_controller/focusChange',{id:application.id, window:application.focusId});
+    socket.emit('tuxeremote/osController/focusChange',{id:application.id, window:application.focusId});
     console.log("FOCUS app:",application.name, " title:", application.windows[application.focusId].title)
   }
 
@@ -168,7 +175,7 @@ export class OsController implements OsInterface{
   }
 
   private onSoundChangeLowLevel(socket: any, sound: number){
-    socket.emit('tuxeremote/os_controller/soundChange',sound);
+    socket.emit('tuxeremote/osController/soundChange',sound);
     console.log("SOUND ",sound, "%");
   }
 
