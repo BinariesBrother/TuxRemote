@@ -46,7 +46,7 @@
           src="{{application.icon}}" item-icon></iron-image>
     </div>
     <paper-item-body two-line>
-      <div>{{application.name}}</div>
+      <div>{{_computeName(application)}}</div>
       <!-- <div secondary>{{description}}</div> -->
     </paper-item-body>
     <paper-ripple id="ripple" noink></paper-ripple><!-- fix image radius issue... -->
@@ -71,7 +71,7 @@
       },
 
       _onTap: function(event) {
-        if (!event.detail.x) {
+        if (!event.detail.x && this.application.icon != undefined) {
           var rect = this.$.icon.getBoundingClientRect();
           event.detail = {
             x: rect.left + (rect.width / 2),
@@ -82,7 +82,11 @@
         this.async(function() {
           this.$.ripple.upAction();
         }, 500);
-      }
+      },
+
+      _computeName: function(application) {
+        return application.name || application.id;
+      },
     });
   </script>
 </dom-module>

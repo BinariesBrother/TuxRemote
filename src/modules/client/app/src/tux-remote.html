@@ -87,7 +87,7 @@
           this.$.drawer.close();
         }
         // Animate the app-header ripple
-        if (this.$.appToolbarImage) {
+        if (this.$.appToolbarImage && this.selected.icon != undefined) {
           var rect = this.$.appToolbarImage.getBoundingClientRect();
           this.$.toolbarRipple.downAction({
             detail: {

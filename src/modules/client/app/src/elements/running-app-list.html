@@ -63,57 +63,33 @@
       },
 
       ready: function() {
-        this.applications = [
-          {
-            id: 'id.Chormium',
-            name: 'Chormium Browser',
-            icon: 'http://lorempixel.com/41/41'
-          },
-          {
-            id: 'id.Atom',
-            name: 'Atom',
-            icon: 'http://lorempixel.com/42/42'
-          },
-          {
-            id: 'id.Terminal',
-            name: 'Terminal',
-            icon: 'http://lorempixel.com/43/43'
-          },
-        ];
-        this.push('applications', {
-          id: 'id.Terminator',
-          name: 'Terminator',
-          icon: 'http://lorempixel.com/44/44'
-        });
-        for (let i = 0; i < 42; i++) {
-          this.push('applications', {
-            id: 'id.Item' + i,
-            name: 'Item ' + i,
-            icon: 'http://lorempixel.com/40/40'
-          });
-        }
-        this.$.list.select('id.Terminal');
         this.socketListen('tuxRemote/osController/setRunList', this._onSetRunList.bind(this));
         this.socketListen('tuxRemote/osController/applicationsOpened', function() {
-          console.log('applicationsOpened', arguments);
+          // console.log('applicationsOpened', arguments);
         });
         this.socketListen('tuxRemote/osController/applicationsChanged', function() {
-          console.log('applicationsChanged', arguments);
+          // console.log('applicationsChanged', arguments);
         });
         this.socketListen('tuxRemote/osController/applicationsClosed', function() {
-          console.log('applicationsClosed', arguments);
+          // console.log('applicationsClosed', arguments);
         });
-        this.socketListen('tuxRemote/osController/focusChange', function() {
-          console.log('focusChange', arguments);
-        });
+        this.socketListen('tuxRemote/osController/focusChange', this._onFocusChanged.bind(this));
         this.socketListen('tuxRemote/osController/soundChange', function() {
-          console.log('soundChange', arguments);
+          // console.log('soundChange', arguments);
         });
         this.socketEmit('tuxRemote/osController/getRunList');
       },
 
-      _onSetRunList: function() {
-        console.log(arguments);
+      _onSetRunList: function(list) {
+        for (var id in list) {
+          if (list.hasOwnProperty(id)) {
+            this.push('applications', list[id]);
+          }
+        }
+      },
+
+      _onFocusChanged: function(app) {
+        this.$.list.select(app.id);
       },
 
       _onItemSelect: function(event, detail) {
