@@ -1,0 +1,49 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../app-theme.html">
+<link rel="import" href="admin-item.html">
+<link rel="import" href="../behaviors/socket-behavior.html">
+<link rel="import" href="../behaviors/list-behavior.html">
+
+<dom-module id="admin-menu">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-listbox id="list" on-iron-select="_onItemSelect">
+      <template is="dom-repeat" items="{{menu}}" as="moduleEntry">
+        <admin-item entry="{{moduleEntry}}"></admin-item>
+      </template>
+    </paper-listbox>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'admin-menu',
+
+      behaviors: [
+        TuxRemote.ListBehavior,
+        TuxRemote.SocketBehavior,
+      ],
+
+      properties: {
+        menu: {
+          type: Array,
+          value: [],
+        },
+      },
+
+      ready: function() {
+        this.socketListen('tuxRemote/client/setAdminMenu', this._setAdminMenu.bind((this)));
+        this.socketEmit('tuxRemote/client/getAdminMenu');
+      },
+
+      _setAdminMenu: function(menu) {
+        this.set('menu', menu);
+      },
+    });
+  </script>
+</dom-module>

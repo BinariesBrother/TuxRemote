@@ -1,0 +1,25 @@
+
+<script>
+
+  TuxRemote.ListBehavior = {
+
+    properties: {
+      selected: {
+        type: Object,
+        notify: true,
+        value: {},
+      },
+    },
+
+    _onItemSelect: function(event, item) {
+      this.set('selected', item);
+    },
+
+    focusSelected: function() {
+      if (this.$.list && this.$.list.selectedItem) {
+        this.$.list.selectedItem.focus();
+      }
+    },
+
+  };
+</script>

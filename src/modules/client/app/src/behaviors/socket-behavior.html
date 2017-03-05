@@ -1,0 +1,29 @@
+
+<script src="/bower_components/socket.io-client/dist/socket.io.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+
+  var socket = io(window.location.origin);
+
+  TuxRemote.SocketBehavior = {
+
+    /**
+     * Attach a callback to a socket event.
+     */
+    socketListen: function(event, callback) {
+      if (socket) {
+        socket.on(event, callback);
+      }
+    },
+
+    /**
+     * Send an event (with arguments) to the server.
+     */
+    socketEmit: function(event) {
+      if (socket && event !== '') {
+        socket.emit.apply(socket, arguments);
+      }
+    },
+
+  };
+</script>

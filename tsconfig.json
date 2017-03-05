@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "outDir": "lib",
     "module": "commonjs",
-    "declaration": true,
+    "declaration": false,
     "noImplicitAny": false,
     "removeComments": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "inlineSources": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "traceResolution": false
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules/",
+    "src/static/",
+    "dist/static/",
+    "src/modules/client/app",
+    "dist/modules/client/app"
+  ]
 }

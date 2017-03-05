@@ -9,6 +9,7 @@
 <link rel="import" href="../app-theme.html">
 <link rel="import" href="../app-icons.html">
 <link rel="import" href="app-list.html">
+<link rel="import" href="admin-menu.html">
 
 <dom-module id="tux-drawer">
   <template>
@@ -32,6 +33,7 @@
       </app-header>
       <iron-pages selected="[[current.type]]" attr-for-selected="name">
         <app-list id="appList" name="app-list" selected={{selected}}></app-list>
+        <admin-menu id="adminMenu" name="admin-menu" selected={{selected}}></admin-menu>
       </iron-pages>
     </app-header-layout>
   </template>
@@ -43,7 +45,7 @@
         current: {
           type: Object,
           value: {
-            type: 'app-list',
+            type: 'admin-menu',
           },
         },
         selected: {
@@ -67,11 +69,12 @@
 
       _switchToAdminMenu: function() {
         this._switch('admin-menu');
+        this.$.adminMenu.focusSelected();
       },
 
       _switchToAppList: function() {
         this._switch('app-list');
-        this.$.appList.focusSelectedApp();
+        this.$.appList.focusSelected();
       },
     });
   </script>

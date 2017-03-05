@@ -3,9 +3,12 @@
 <link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="../app-theme.html">
 <link rel="import" href="app-item.html">
+<link rel="import" href="../behaviors/socket-behavior.html">
+<link rel="import" href="../behaviors/list-behavior.html">
 
 <dom-module id="app-list">
   <template>
@@ -29,17 +32,15 @@
     Polymer({
       is: 'app-list',
 
+      behaviors: [
+        TuxRemote.ListBehavior,
+        TuxRemote.SocketBehavior,
+      ],
+
       properties: {
         applications: {
           type: Array,
           value: [],
-        },
-
-        selected: {
-          type: Object,
-          notify: true,
-          value: {},
-          // observer: '_onSelecedChanged'
         },
       },
 
@@ -70,21 +71,6 @@
         }
       },
 
-      _onItemSelect: function(event, item) {
-        this.set('selected', item);
-      },
-
-      focusSelectedApp: function() {
-        if (this.$.list.selectedItem) {
-          this.$.list.selectedItem.focus();
-        }
-      },
-
-      // _onSelecedChanged: function(newValue, oldValue) {
-      //   if (newValue.item != undefined && newValue.item.localName == 'app-item') {
-      //     this.$.list.selected = this.$.list.indexOf(newValue.item);
-      //   }
-      // },
     });
   </script>
 </dom-module>

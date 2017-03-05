@@ -1,9 +1,13 @@
 import * as program from "commander";
 import * as logger  from "node-yolog";
+import * as path from "path";
 
 import "reflect-metadata";
 
 import {ModuleManager} from "./moduleManager";
+
+let appDirectory = path.dirname(require.main.filename);
+exports.appDirectory = appDirectory;
 
 /**
  * Enable/disable logger with commander options

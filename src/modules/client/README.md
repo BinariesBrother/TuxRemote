@@ -15,7 +15,6 @@ It's also provide hooks to allow other modules to add your own menu entries on t
 registerMenu() {
   return [{
     label: "<MODULE_NAME>",
-    static_path: "<PATH_TO_THE_VIEW_FOLDER>",
     menu_entries: [
       {
         label: "<ENTRY_LABEL>",
@@ -32,7 +31,6 @@ registerMenu() {
 | property     | required | description |
 |--------------|----------|-------------|
 | label        | true     | The main module menu entry label. |
-| static_path  | true     | The path to the static folder to get the module static files (eg. view element, svg icon element) |
 | menu_entries | true     | An array of menu entry object describe below. |
 
 #### Menu entry
@@ -46,3 +44,18 @@ registerMenu() {
 
 A Polymer component view can work with some behaviors:
 * ClientSocketBehavior -> Allow polymer component to work with the main websocket.
+
+
+### *tuxRemote/client/registerStatic*
+
+Allow other modules to add your own static path. Useful if the module want to add a view component.
+Each callback attached to this hook must return an array of string.
+
+~~~js
+@hook("tuxRemote/client/registerStatic")
+onRegisterStatic() {
+  return [
+    'my-module/static/path'
+  ];
+}
+~~~

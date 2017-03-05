@@ -20,14 +20,7 @@ module.exports = function(grunt) {
           src: ["src/\*\*/\*.ts", ["!src/.baseDir.ts", "!src/static"]],
           dest: "./dist"
         }],
-        options: {
-          module: "commonjs",
-          target: "es6",
-          sourceMap: false,
-          allowJs: true,
-          emitDecoratorMetadata: true,
-          experimentalDecorators: true
-        }
+        tsconfig: "./tsconfig.json"
       }
     },
     watch: {

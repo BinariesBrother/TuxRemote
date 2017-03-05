@@ -19,7 +19,7 @@
       :host {
         display: block;
       }
-      .spacer {
+      app-toolbar ::content [spacer] {
         margin-left: 16px;
       }
       #toolbarRipple {
@@ -48,9 +48,9 @@
             <div main-title>TuxRemote</div>
           </app-toolbar>
           <app-toolbar sticky>
-            <iron-image id="appToolbarImage" class="app-icon" sizing="cover" preload fade
-              src="{{_getIcon(selected)}}"></iron-image>
-            <div class="spacer">{{_getTitle(selected)}}</div>
+            <iron-image id="appToolbarImage" class="app-icon" sizing="cover"
+                        src="{{_getIcon(selected)}}"></iron-image>
+            <div spacer$="{{_checkIcon(selected)}}">{{_getTitle(selected)}}</div>
           </app-toolbar>
           <paper-ripple id="toolbarRipple" noink></paper-ripple>
         </app-header>
@@ -85,16 +85,18 @@
           this.$.drawer.close();
         }
         // Animate the app-header ripple
-        var rect = this.$.appToolbarImage.getBoundingClientRect();
-        this.$.toolbarRipple.downAction({
-          detail: {
-            x: rect.left + (rect.width / 2),
-            y: rect.top + (rect.height / 2)
-          }
-        });
-        this.async(function() {
-          this.$.toolbarRipple.upAction();
-        }, 500);
+        if (this.$.appToolbarImage) {
+          var rect = this.$.appToolbarImage.getBoundingClientRect();
+          this.$.toolbarRipple.downAction({
+            detail: {
+              x: rect.left + (rect.width / 2),
+              y: rect.top + (rect.height / 2)
+            }
+          });
+          this.async(function() {
+            this.$.toolbarRipple.upAction();
+          }, 500);
+        }
       },
 
       _computeSelected: function(selected) {
@@ -108,6 +110,9 @@
         if (selected.item != undefined && selected.item.localName == 'app-item') {
           return selected.item.application;
         }
+        else if (selected.item != undefined && selected.item.localName == 'admin-item') {
+          return selected.item.entry;
+        }
         return {};
       },
 
@@ -118,9 +123,22 @@
         return '';
       },
 
+      _checkIcon: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return (selected.item.application.icon) ? true : false;
+        }
+        else if (selected.item != undefined && selected.item.localName == 'admin-item') {
+          return (selected.item.entry.icon) ? true : false;
+        }
+        return '';
+      },
+
       _getTitle: function(selected) {
         if (selected.item != undefined && selected.item.localName == 'app-item') {
           return selected.item.application.name;
+        }
+        else if (selected.item != undefined && selected.item.localName == 'admin-item') {
+          return selected.item.entry.label;
         }
         return '';
       },
