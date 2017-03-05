@@ -5,21 +5,21 @@ export function getJson(){
         "name":"Navigator",
         "commandesTypes":[
             {
-              "name":"next",
+              "name":"Navigator.next",
               "command":{
                   "name":"Next Tab",
                   "shell":"xdotool key ctrl+Tab"
               }
             },
             {
-              "name":"previous",
+              "name":"Navigator.previous",
               "command":{
                   "name":"Previous Tab",
                   "shell":"xdotool key ctrl+shift+Tab"
               }
             },
             {
-              "name":"set_url"
+              "name":"Navigator.set_url"
             }
         ]
       },
@@ -31,19 +31,19 @@ export function getJson(){
         "name":"Player",
         "commandesTypes":[
             {
-              "name":"next"
+              "name":"Player.next"
             },
             {
-              "name":"pause"
+              "name":"Player.pause"
             },
             {
-              "name":"play"
+              "name":"Player.play"
             },
             {
-              "name":"previous"
+              "name":"Player.previous"
             },
             {
-              "name":"stop"
+              "name":"Player.stop"
             }
         ]
       }
@@ -84,7 +84,40 @@ export function getJson(){
         "id":"SMPLAYER.SMPLAYER",
         "name":"SMPlayer",
         "view":"Player",
-        "commands":[]
+        "commands":[
+          {
+            "name":"Next",
+            "shell":"smplayer -send-action play_next"
+          },
+          {
+            "name":"Previous",
+            "shell":"smplayer -send-action play_prev"
+          },
+          {
+            "name":"Stop",
+            "shell":"smplayer -send-action stop"
+          },
+          {
+            "name":"FullScreen",
+            "shell":"smplayer -send-action fullScreen"
+          },
+          {
+            "name":"shuffle",
+            "shell":"smplayer -send-action pl_shuffle"
+          },
+          {
+            "name":"Repeat",
+            "shell":"smplayer -send-action repeat"
+          },
+          {
+            "name":"Acceleration",
+            "shell":"smplayer -send-action double_speed"
+          },
+          {
+            "name":"Deceleration",
+            "shell":"smplayer -send-action halve_speed"
+          }
+        ]
     }
   ]};
 }

@@ -25,8 +25,12 @@ export async function init() : Promise<Object> {
 function initDb(connection, init){
   let viewPromises = [];
   init.views.forEach(view=>viewPromises.push(initViews(connection, view)));
-  Promise.all(viewPromises).then(result=>{
-    init.applications.forEach(app=>initApplication(connection, app))
+  return Promise.all(viewPromises).then(result=>{
+    viewPromises = [];
+    init.applications.forEach(app=>viewPromises.push(initApplication(connection, app)));
+    let last = Promise.all(viewPromises);
+    last.catch(error=>console.log(error));
+    return last;
   });
 }
 
@@ -48,32 +52,38 @@ function initCommandesTypes(connection, commandType, viewSaved):Promise<any> {
   viewCommandType.view = viewSaved;
 
   return CommandTypeRepository.save(connection, ncommandType).then(result=>{
-    let ncommand: Command = new Command();
-    ncommand.name = commandType.command.name;
-    ncommand.shell = commandType.command.shell;
-    return CommandRepository.save(connection, ncommand).then(commandResult=>{
-      viewCommandType.command = commandResult;
-      viewCommandType.commandType = result;
+    viewCommandType.commandType = result;
+    if(commandType.command){
+      let ncommand: Command = new Command();
+      ncommand.name = commandType.command.name;
+      ncommand.shell = commandType.command.shell;
+      return CommandRepository.save(connection, ncommand).then(commandResult=>{
+        viewCommandType.command = commandResult;
+        return ViewCommandTypeRepository.save(connection, viewCommandType);
+      });
+    } else {
       return ViewCommandTypeRepository.save(connection, viewCommandType);
-    });
+    }
   });
 }
 
 function initApplication(connection, application){
   let napplication: Application = new Application();
   napplication.name = application.name;
-  napplication.id = application.view;
-  ViewRepository.findOne(connection, application.view)
+  napplication.id = application.id;
+  return ViewRepository.findOne(connection, application.view)
     .then(view=>{
       napplication.view = view;
       return ApplicationRepository.save(connection, napplication).then(app=>{
+        let promises = [];
         application.commands.forEach(command=>{
           let ncommand: Command = new Command();
           ncommand.name = command.name;
           ncommand.shell = command.shell;
-          ncommand.applications = [app];
-          return CommandRepository.save(connection, ncommand);
+          ncommand.application = app;
+          promises.push(CommandRepository.save(connection, ncommand));
         })
+        return Promise.all(promises);
       });
     });
 }
