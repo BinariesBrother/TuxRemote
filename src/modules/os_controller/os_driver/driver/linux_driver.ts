@@ -41,7 +41,7 @@ export class LinuxDriver implements OsDriver {
   }
 
   public getFocus(): ApplicationDto {
-    return this.focus;    
+    return this.focus;
   }
 
   public getSound(): any {
@@ -95,14 +95,14 @@ export class LinuxDriver implements OsDriver {
     let openedApplications : ApplicationDto[] = Object.keys(newRun).map(id=>{
       return this.oldRun[id]?undefined:newRun[id];
     }).filter(nonNull=>nonNull);
-    
+
     let killedApplications : ApplicationDto[] = Object.keys(this.oldRun).map(id=>{
       return newRun[id]?undefined:this.oldRun[id];
     }).filter(nonNull=>nonNull);
-    
+
     let changedApplications : ApplicationDto[] = Object.keys(diff)
       .map(id=>this.oldRun[id]);
-    
+
     let promise:Promise<any>[]=[];
     if(killedApplications.length>0){
       promise.push(this.killedApplications(killedApplications));
@@ -126,7 +126,7 @@ export class LinuxDriver implements OsDriver {
   }
 
   private async openedApplications(openedApplications: ApplicationDto[]): Promise<any>{
-    let ids: String[] = openedApplications.map(app=>app.id);
+    let ids: string[] = openedApplications.map(app=>app.id);
     let run :{[id:string]:ApplicationDto}= {};
     openedApplications.forEach(app=>run[app.id]=app);
     let connectionMere = await connectionManager.session();
@@ -139,6 +139,8 @@ export class LinuxDriver implements OsDriver {
             app = ApplicationDto.fromApplication(application);
             app.windows = run[app.id].windows;
             this.oldRun[app.id]=app;
+          }else{
+            this.oldRun[applicationId] = openedApplications.filter(opened=>opened.id==applicationId)[0];
           }
           return new Promise(resolve=>resolve(app));
         }).catch(error=>console.log(error)));
@@ -182,7 +184,7 @@ export class LinuxDriver implements OsDriver {
       this.sound = sound;
       this.father.onSoundChange(this.sound);
     }
-    
+
   }
 
   private firstElementBind(error, stdout, stderr){
