@@ -8,6 +8,7 @@ import { MousePosition } from './../mouse_position';
 import { CommandDto } from './../../model/dto/CommandDto';
 import { ApplicationDto } from './../../model/dto/ApplicationDto';
 import * as connectionManager from "../../model/repository/Connection";
+import * as logger from 'node-yolog';
 
 export class LinuxDriver implements OsDriver {
   father: OsInterface;
@@ -16,14 +17,8 @@ export class LinuxDriver implements OsDriver {
   token: number = 0;
   focus: ApplicationDto;
   sound: number;
-  unknowFocus: ApplicationDto;
 
   public constructor(){
-    this.unknowFocus = new ApplicationDto();
-    this.unknowFocus.id = "UNKNOW";
-    this.unknowFocus.name = "UNKNOW";
-    this.unknowFocus.focusId = "UNKNOW";
-    this.unknowFocus.addWindow({title:"UNKNOW", windowId:"UNKNOW"});
     this.init();
 
   }
@@ -79,10 +74,12 @@ export class LinuxDriver implements OsDriver {
       let str = apps[i].replace(/"/g, '\\"').replace(/\(\(/g, '"');
       let app = JSON.parse(str);
       app.id = app.id.toUpperCase();
-      if(!result[app.id]){
-        result[app.id] = ApplicationDto.fromApplicationJson(app);
+      if(app.id){
+        if(!result[app.id]){
+          result[app.id] = ApplicationDto.fromApplicationJson(app);
+        }
+        result[app.id].addWindow(app);
       }
-      result[app.id].addWindow(app);
     }
     return result;
   }
@@ -165,11 +162,7 @@ export class LinuxDriver implements OsDriver {
     if (parameters.length<2) { return; }
     let focus = this.oldRun[parameters[1].toUpperCase()];
     let focusId = parameters[0];
-    if(!focus){
-      focus = this.unknowFocus;
-      focusId = focus.focusId;
-    }
-    if(!this.focus || (focus.id != this.focus.id || focusId != this.focus.focusId)){
+    if(focus && (!this.focus || (focus.id != this.focus.id || focusId != this.focus.focusId))){
       this.focus = focus;
       this.focus.focusId = focusId;
       this.father.onFocusChange(this.focus);

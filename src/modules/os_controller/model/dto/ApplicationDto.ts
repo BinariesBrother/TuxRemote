@@ -3,7 +3,7 @@ import { Command } from './../entities/Command';
 import {ViewDto} from "./ViewDto";
 import {CommandDto} from "./CommandDto";
 import {Application} from "../entities/Application";
-import {JsonProperty} from 'json-typescript-mapper'; 
+import {JsonProperty} from 'json-typescript-mapper';
 
 export class ApplicationDto {
   @JsonProperty({clazz: WindowDto, name: "windows"})
@@ -55,7 +55,7 @@ export class ApplicationDto {
     }
     return result;
   }
-  
+
   public static fromApplicationJson(application): ApplicationDto{
     let result : ApplicationDto = new ApplicationDto();
     result.id = application.id?application.id:void 0;
@@ -70,25 +70,26 @@ export class ApplicationDto {
   public addWindow(app: any){
     let result : WindowDto = new WindowDto();
     result.title = app.title;
-    result.id = app.windowId;
-    this.windows[app.windowId] = result;
+    result.id = app.windowId?app.windowId:app.id;
+    this.windows[result.id] = result;
   }
 
   public merge(application: ApplicationDto):{[id:string]: WindowDto[]}{
     let result :{[id:string]: WindowDto[]} = {opened:[], closed:[], changed:[]};
     Object.keys(application.windows).forEach(windowId=>{
       let window = application.windows[windowId];
-      if(this.windows[window.id] && this.windows[window.id].title!==window.title){
+
+      if(window.id && this.windows[window.id] && this.windows[window.id].title!==window.title){
         result["changed"].push(window);
         this.windows[window.id].title = window.title;
-      } else if(!this.windows[window.id]){
+      } else if(window.id && !this.windows[window.id]){
         result["opened"].push(window);
         this.addWindow(window);
       }
     });
     Object.keys(this.windows).forEach(windowId=>{
       let window = this.windows[windowId];
-      if(!application.windows[window.id]){
+      if(window.id && !application.windows[window.id]){
         result["closed"].push(window);
         this.windows[window.id] = undefined;
       }
@@ -101,7 +102,7 @@ export class ApplicationDto {
     :{[id:string]: {[id:string]: WindowDto[]}}{
     let result :any = {};
     Object.keys(compare).forEach(applicationId=>{
-      if(origine[applicationId]){
+      if(origine[applicationId] && compare[applicationId]){
         let temp = origine[applicationId].merge(compare[applicationId]);
         let diff : {[id:string]: WindowDto[]}= {};
         if((temp["opened"].length>0 || temp["closed"].length>0 || temp["changed"].length>0) && !result[applicationId]){
