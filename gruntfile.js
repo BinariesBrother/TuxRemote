@@ -49,7 +49,7 @@ module.exports = function(grunt) {
     "copy"
   ]);
 
-  grunt.registerTask("ts", [
+  grunt.registerTask("compile", [
     "ts"
   ]);
 
