@@ -20,11 +20,21 @@
       .content {
         height: 300vh;
       }
+
+      [custom-spacer] {
+        margin-left: 16px;
+      }
+
+      #toolbarRipple {
+        color: black;
+      }
+
     </style>
 
     <app-drawer-layout id="drawerLayout" fullbleed>
+
       <app-drawer>
-        <running-app-list></running-app-list>
+        <running-app-list selected="{{selected}}"></running-app-list>
       </app-drawer>
 
       <app-header-layout has-scrolling-region>
@@ -33,20 +43,61 @@
             <paper-icon-button icon="app-icons:menu" drawer-toggle></paper-icon-button>
             <div main-title>TuxRemote</div>
           </app-toolbar>
-          <app-toolbar sticky>
-            <div>Seconde toolbar</div>
-          </app-toolbar>
-        </app-header>
-        <div class="content">
+          <div sticky>
+            <app-toolbar>
+              <iron-image id="appToolbarImage" class="app-icon" sizing="cover"
+                          src="{{selected.icon}}"></iron-image>
+              <div custom-spacer$="{{_checkIcon(selected)}}">{{selected.name}}</div>
+            </app-toolbar>
+            <app-toolbar>
 
-        </div>
+            </app-toolbar>
+          </div>
+          <paper-ripple id="toolbarRipple" noink></paper-ripple>
+        </app-header>
+        <div class="content"></div>
       </app-header-layout>
     </app-drawer-layout>
 
   </template>
   <script>
     Polymer({
-      is: 'tux-remote'
+      is: 'tux-remote',
+
+      properties: {
+        /**
+         * The current selected application. See running-app-list element.
+         */
+        selected: {
+          type: Object,
+          value: {},
+          observer: '_onSelectedChanged',
+        },
+      },
+
+      _onSelectedChanged: function() {
+        // Close the drawer
+        if (this.$.drawerLayout.narrow) {
+          this.$.drawer.close();
+        }
+        // Animate the app-header ripple
+        if (this.$.appToolbarImage) {
+          var rect = this.$.appToolbarImage.getBoundingClientRect();
+          this.$.toolbarRipple.downAction({
+            detail: {
+              x: rect.left + (rect.width / 2),
+              y: rect.top + (rect.height / 2)
+            }
+          });
+          this.async(function() {
+            this.$.toolbarRipple.upAction();
+          }, 500);
+        }
+      },
+
+      _checkIcon: function(selected) {
+        return (selected.icon !== '')? true : false;
+      },
     });
   </script>
 </dom-module>
