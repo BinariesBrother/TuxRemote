@@ -23,9 +23,9 @@ export class OsController implements OsInterface{
   events: string[];
 
   private constructor(){
-    //this.initbd().then(result=>{
+    this.initbd().then(result=>{
       this.osDriver = osFactory.getOsDriver(this);
-    //});
+    });
     this.events = defineHooks([
       "tuxeRemote/osController/exec",
       "tuxeRemote/osController/getRunList",
