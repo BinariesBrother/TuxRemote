@@ -49,4 +49,8 @@ module.exports = function(grunt) {
     "copy"
   ]);
 
+  grunt.registerTask("ts", [
+    "ts"
+  ]);
+
 };
