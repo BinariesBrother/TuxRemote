@@ -31,9 +31,9 @@
           </div>
         </app-toolbar>
       </app-header>
-      <paper-listbox id="list" on-iron-select="_onItemSelect">
+      <paper-listbox id="list" on-iron-select="_onItemSelect" selected="{{selected.id}}" attr-for-selected="name">
         <template is="dom-repeat" items="{{applications}}" as="application">
-          <app-item application="{{application}}"></app-item>
+          <app-item name="{{application.id}}" application="{{application}}"></app-item>
         </template>
       </paper-listbox>
     </app-header-layout>
@@ -65,28 +65,34 @@
       ready: function() {
         this.applications = [
           {
+            id: 'id.Chormium',
             name: 'Chormium Browser',
             icon: 'http://lorempixel.com/41/41'
           },
           {
+            id: 'id.Atom',
             name: 'Atom',
             icon: 'http://lorempixel.com/42/42'
           },
           {
+            id: 'id.Terminal',
             name: 'Terminal',
             icon: 'http://lorempixel.com/43/43'
           },
         ];
         this.push('applications', {
+          id: 'id.Terminator',
           name: 'Terminator',
           icon: 'http://lorempixel.com/44/44'
         });
         for (let i = 0; i < 42; i++) {
           this.push('applications', {
+            id: 'id.Item' + i,
             name: 'Item ' + i,
             icon: 'http://lorempixel.com/40/40'
           });
         }
+        this.$.list.select('id.Terminal');
       },
 
       _onItemSelect: function(event, detail) {

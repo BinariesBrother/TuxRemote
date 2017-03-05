@@ -5,6 +5,8 @@
 <link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="/bower_components/paper-tabs/paper-tab.html">
 
 <link rel="import" href="app-theme.html">
 <link rel="import" href="app-icons.html">
@@ -50,7 +52,11 @@
               <div custom-spacer$="{{_checkIcon(selected)}}">{{selected.name}}</div>
             </app-toolbar>
             <app-toolbar>
-
+              <paper-tabs selected="0">
+                <paper-tab>TAB 1</paper-tab>
+                <paper-tab>TAB 2</paper-tab>
+                <paper-tab>TAB 3</paper-tab>
+              </paper-tabs>
             </app-toolbar>
           </div>
           <paper-ripple id="toolbarRipple" noink></paper-ripple>
