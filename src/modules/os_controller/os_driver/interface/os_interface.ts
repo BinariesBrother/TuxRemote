@@ -1,4 +1,4 @@
-import { ApplicationDto } from './../../../model/dto/ApplicationDto';
+import { ApplicationDto } from './../../model/dto/ApplicationDto';
 
 export interface OsInterface{
 

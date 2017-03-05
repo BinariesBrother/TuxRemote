@@ -1,13 +1,13 @@
 import { exec } from 'child_process';
-import { ApplicationRepository } from './../../../model/repository/ApplicationRepository';
-import { Application } from './../../../model/entities/Application';
+import { ApplicationRepository } from './../../model/repository/ApplicationRepository';
+import { Application } from './../../model/entities/Application';
 import { OsController } from './../../os_controller';
 import { OsInterface } from './../interface/os_interface';
 import { OsDriver } from './../interface/os_driver';
 import { MousePosition } from './../mouse_position';
-import { CommandDto } from './../../../model/dto/CommandDto';
-import { ApplicationDto } from './../../../model/dto/ApplicationDto';
-import * as connectionManager from "../../../model/repository/Connection";
+import { CommandDto } from './../../model/dto/CommandDto';
+import { ApplicationDto } from './../../model/dto/ApplicationDto';
+import * as connectionManager from "../../model/repository/Connection";
 
 export class LinuxDriver implements OsDriver {
   father: OsInterface;

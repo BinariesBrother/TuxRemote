@@ -3,9 +3,9 @@ import { OsInterface } from './os_driver/interface/os_interface';
 import { MousePosition } from './os_driver/mouse_position';
 import { osFactory } from './os_factory';
 import {exec} from 'child_process';
-import {Application} from '../model/entities/Application';
-import {ApplicationDto} from '../model/dto/ApplicationDto';
-import {ApplicationRepository} from '../model/repository/ApplicationRepository';
+import {Application} from './model/entities/Application';
+import {ApplicationDto} from './model/dto/ApplicationDto';
+import {ApplicationRepository} from './model/repository/ApplicationRepository';
 
 import {invoke, defineHook, defineHooks, hook} from "../hooks/hooks";
 
