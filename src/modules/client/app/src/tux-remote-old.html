@@ -1,0 +1,147 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-ripple/paper-ripple.html">
+
+<link rel="import" href="app-theme.html">
+<link rel="import" href="app-icons.html">
+<link rel="import" href="elements/tux-drawer.html">
+<link rel="import" href="elements/app-view.html">
+
+<dom-module id="tux-remote">
+  <template>
+    <style include="app-theme">
+      :host {
+        display: block;
+      }
+      app-toolbar ::content [spacer] {
+        margin-left: 16px;
+      }
+      #toolbarRipple {
+        color: black;
+      }
+
+      /* TODO Remove css below */
+      iron-pages {
+        height: 300vh;
+      }
+
+    </style>
+
+    <app-drawer-layout id="drawerLayout" fullbleed>
+      <!-- Drawer content -->
+      <app-drawer id="drawer" swipe-open no-focus-trap>
+        <tux-drawer selected="{{selected}}"></tux-drawer>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+
+        <app-header condenses fixed>
+          <app-toolbar>
+            <paper-icon-button icon="app-icons:menu" drawer-toggle></paper-icon-button>
+            <div main-title>TuxRemote</div>
+          </app-toolbar>
+          <app-toolbar sticky>
+            <iron-image id="appToolbarImage" class="app-icon" sizing="cover"
+                        src="{{_getIcon(selected)}}"></iron-image>
+            <div spacer$="{{_checkIcon(selected)}}">{{_getTitle(selected)}}</div>
+          </app-toolbar>
+          <paper-ripple id="toolbarRipple" noink></paper-ripple>
+        </app-header>
+
+        <iron-pages
+            selected="{{_computeSelected(selected)}}"
+            attr-for-selected="name"
+            fallback-selection="notfound"
+            role="main">
+          <app-view application="{{_getApplication(selected)}}" name="app-view"></app-view>
+          <view-notfound name="notfound"></view-notfound>
+        </iron-pages>
+      </app-header-layout>
+    </app-drawer-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'tux-remote',
+
+      properties: {
+        selected: {
+          type: Object,
+          value: {},
+          observer: '_onSelectedChanged',
+        },
+      },
+
+      _onSelectedChanged: function() {
+        // Close the drawer
+        if (this.$.drawerLayout.narrow) {
+          this.$.drawer.close();
+        }
+        // Animate the app-header ripple
+        if (this.$.appToolbarImage) {
+          var rect = this.$.appToolbarImage.getBoundingClientRect();
+          this.$.toolbarRipple.downAction({
+            detail: {
+              x: rect.left + (rect.width / 2),
+              y: rect.top + (rect.height / 2)
+            }
+          });
+          this.async(function() {
+            this.$.toolbarRipple.upAction();
+          }, 500);
+        }
+      },
+
+      _computeSelected: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return 'app-view';
+        }
+        return 'notfound';
+      },
+
+      _getApplication: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return selected.item.application;
+        }
+        else if (selected.item != undefined && selected.item.localName == 'admin-item') {
+          return selected.item.entry;
+        }
+        return {};
+      },
+
+      _getIcon: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return selected.item.application.icon;
+        }
+        return '';
+      },
+
+      _checkIcon: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return (selected.item.application.icon) ? true : false;
+        }
+        else if (selected.item != undefined && selected.item.localName == 'admin-item') {
+          return (selected.item.entry.icon) ? true : false;
+        }
+        return '';
+      },
+
+      _getTitle: function(selected) {
+        if (selected.item != undefined && selected.item.localName == 'app-item') {
+          return selected.item.application.name;
+        }
+        else if (selected.item != undefined && selected.item.localName == 'admin-item') {
+          return selected.item.entry.label;
+        }
+        return '';
+      },
+    });
+  </script>
+</dom-module>
