@@ -14,17 +14,26 @@ export class LinuxDriver implements OsDriver {
   oldRun : {[id:string]:ApplicationDto}={};
   onRun : boolean = false;
   token: number = 0;
+  focus: ApplicationDto;
+  sound: number;
+  unknowFocus: ApplicationDto;
 
   public constructor(){
+    this.unknowFocus = new ApplicationDto();
+    this.unknowFocus.id = "UNKNOW";
+    this.unknowFocus.name = "UNKNOW";
+    this.unknowFocus.focusId = "UNKNOW";
+    this.unknowFocus.addWindow({title:"UNKNOW", windowId:"UNKNOW"});
     this.init();
+
   }
 
   public setFather(OsInterface: OsInterface){
     this.father = OsInterface;
   }
 
-  public exec(cmd) {
-    
+  public exec(cmd: CommandDto) {
+    exec(cmd.shell);
   }
 
   public getRunList(): {[id:string]:ApplicationDto} {
@@ -32,27 +41,27 @@ export class LinuxDriver implements OsDriver {
   }
 
   public getFocus(): ApplicationDto {
-    return null;    
+    return this.focus;    
   }
 
   public getSound(): any {
-    
+    return this.sound;
   }
 
   public setFocus(pid: string) {
-    
+    exec("wmctrl -i -R "+pid);
   }
 
   public setSound(volume:number) {
-    
+    exec("amixer -D pulse set Master "+volume+"%");
   }
 
   public kill(pid: string) {
-    
+    exec("wmctrl -i -c "+pid);
   }
 
   public open(cmd: CommandDto) {
-    
+    exec(cmd.shell);
   }
 
 
@@ -79,7 +88,6 @@ export class LinuxDriver implements OsDriver {
   }
 
   private async run(error, stdout, stderr) {
-    let connectionMere = await connectionManager.session();
     if (stdout==="") { return; }
     let newRun: {[id:string]:ApplicationDto} = this.readApplication(stdout);
     let diff = ApplicationDto.mergeApplciations(this.oldRun, newRun);
@@ -94,10 +102,6 @@ export class LinuxDriver implements OsDriver {
     
     let changedApplications : ApplicationDto[] = Object.keys(diff)
       .map(id=>this.oldRun[id]);
-    /*console.log("run"
-      ,Object.keys(this.oldRun).map(id=>this.oldRun[id].name)
-      ,Object.keys(newRun).map(id=>newRun[id].id).filter(nonNull=>nonNull));
-    */
     
     let promise:Promise<any>[]=[];
     if(killedApplications.length>0){
@@ -109,22 +113,19 @@ export class LinuxDriver implements OsDriver {
     if(openedApplications.length>0){
       promise.push(this.openedApplications(openedApplications));
     }
-    return Promise.all(promise).then(result=>{
-      
-      this.liberateToken();
-    }).catch(error=>console.log(error));
+    return Promise.all(promise);
   }
-  public async killedApplications(killedApplications: ApplicationDto[]){
+  private async killedApplications(killedApplications: ApplicationDto[]){
     let closes = killedApplications.map(app=>app.id);
     this.father.onCloses(closes);
     closes.forEach(id=>delete this.oldRun[id]);
   }
 
-  public async changedApplications(changedApplications: ApplicationDto[], diff:any){
+  private async changedApplications(changedApplications: ApplicationDto[], diff:any){
     this.father.onChanges(changedApplications, diff);
   }
 
-  public async openedApplications(openedApplications: ApplicationDto[]): Promise<any>{
+  private async openedApplications(openedApplications: ApplicationDto[]): Promise<any>{
     let ids: String[] = openedApplications.map(app=>app.id);
     let run :{[id:string]:ApplicationDto}= {};
     openedApplications.forEach(app=>run[app.id]=app);
@@ -156,24 +157,58 @@ export class LinuxDriver implements OsDriver {
     }
   }
 
+  public focusHandler(error, stdout, stderr){
+    if (stdout==="") { return; }
+    let parameters = stdout.split('\n')[0].split(' ');
+    if (parameters.length<2) { return; }
+    let focus = this.oldRun[parameters[1].toUpperCase()];
+    let focusId = parameters[0];
+    if(!focus){
+      focus = this.unknowFocus;
+      focusId = focus.focusId;
+    }
+    if(!this.focus || (focus.id != this.focus.id || focusId != this.focus.focusId)){
+      this.focus = focus;
+      this.focus.focusId = focusId;
+      this.father.onFocusChange(this.focus);
+    }
+
+  }
+
+  private soundHandler(error, stdout, stderr){
+    if (stdout==="") { return; }
+    let sound = parseInt(stdout);
+    if(this.sound !== sound){
+      this.sound = sound;
+      this.father.onSoundChange(this.sound);
+    }
+    
+  }
+
+  private firstElementBind(error, stdout, stderr){
+    this.run(error, stdout, stderr).then(result=>{
+      this.focusIntervalCallback();
+      this.soundIntervalCallback();
+      this.liberateToken();
+    })
+  }
+
   private runIntervalCallback() {
-    exec('bash '+__dirname+'/linux_commandes/run', this.run.bind(this));
+    exec('bash '+__dirname+'/linux_commandes/run', this.firstElementBind.bind(this));
   }
 
   private focusIntervalCallback() {
-    //exec('bash '+__dirname+'/linux_commandes/focus', this.focus.bind(this));
+    exec('bash '+__dirname+'/linux_commandes/focus', this.focusHandler.bind(this));
   }
 
   private soundIntervalCallback() {
-    //exec('bash '+__dirname+'/linux_commandes/sound', this.sound.bind(this));
+    exec('bash '+__dirname+'/linux_commandes/sound', this.soundHandler.bind(this));
   }
 
   private handler = function() {
     if(this.token==0){
       this.token=1;
       this.runIntervalCallback();
-      //this.focusIntervalCallback();
-      //this.soundIntervalCallback();
     }
   }
 
@@ -182,18 +217,3 @@ export class LinuxDriver implements OsDriver {
   }
 
 }
-/*
-private function sound = function (error, stdout, stderr) {
-  let new_sound = stdout;
-  if (this.oldSound !== undefined) {
-    if (this.oldSound !== new_sound) {
-      this.oldSound = new_sound;
-      this.hashCallBack.sound.call(this,this.oldSound);
-    }
-  }else{
-    this.oldSound=new_sound;
-  }
-};
-
-
-*/
