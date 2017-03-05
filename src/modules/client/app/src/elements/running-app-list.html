@@ -93,6 +93,27 @@
           });
         }
         this.$.list.select('id.Terminal');
+        this.socketListen('tuxRemote/osController/setRunList', this._onSetRunList.bind(this));
+        this.socketListen('tuxRemote/osController/applicationsOpened', function() {
+          console.log('applicationsOpened', arguments);
+        });
+        this.socketListen('tuxRemote/osController/applicationsChanged', function() {
+          console.log('applicationsChanged', arguments);
+        });
+        this.socketListen('tuxRemote/osController/applicationsClosed', function() {
+          console.log('applicationsClosed', arguments);
+        });
+        this.socketListen('tuxRemote/osController/focusChange', function() {
+          console.log('focusChange', arguments);
+        });
+        this.socketListen('tuxRemote/osController/soundChange', function() {
+          console.log('soundChange', arguments);
+        });
+        this.socketEmit('tuxRemote/osController/getRunList');
+      },
+
+      _onSetRunList: function() {
+        console.log(arguments);
       },
 
       _onItemSelect: function(event, detail) {

@@ -12,6 +12,7 @@
      */
     socketListen: function(event, callback) {
       if (socket) {
+        console.log('socketListen');
         socket.on(event, callback);
       }
     },

@@ -27,15 +27,15 @@ export class OsController implements OsInterface{
       this.osDriver = osFactory.getOsDriver(this);
     });
     this.events = defineHooks([
-      "tuxeRemote/osController/exec",
-      "tuxeRemote/osController/getRunList",
-      "tuxeRemote/osController/getFocus",
-      "tuxeRemote/osController/getSound",
-      "tuxeRemote/osController/setFocus",
-      "tuxeRemote/osController/setSound",
-      "tuxeRemote/osController/kill",
-      "tuxeRemote/osController/open",
-      "tuxeRemote/osController/moveMouse"
+      "tuxRemote/osController/exec",
+      "tuxRemote/osController/getRunList",
+      "tuxRemote/osController/getFocus",
+      "tuxRemote/osController/getSound",
+      "tuxRemote/osController/setFocus",
+      "tuxRemote/osController/setSound",
+      "tuxRemote/osController/kill",
+      "tuxRemote/osController/open",
+      "tuxRemote/osController/moveMouse"
     ]);
   }
 
@@ -44,12 +44,12 @@ export class OsController implements OsInterface{
       this.osController = new OsController();
     }
     return this.osController;
-  }  
+  }
 
   private initbd(): Promise<any>{
     return init();
   }
-  
+
   /**
    * define hook annotations
    */
@@ -60,7 +60,7 @@ export class OsController implements OsInterface{
    * ask an command to exec
    * @param args : string command
    */
-  @hook("tuxeRemote/osController/exec")
+  @hook("tuxRemote/osController/exec", () => OsController.getInstance())
   public exec(socket: any, args: any[]){
     this.osDriver.exec(args[0]);
   }
@@ -69,16 +69,16 @@ export class OsController implements OsInterface{
    * asking the runlist
    * @param args: empty
    */
-  @hook("tuxeRemote/osController/getRunList")
+  @hook("tuxRemote/osController/getRunList", () => OsController.getInstance())
   public getRunList(socket: any, args: any[]){
-    socket.emit('tuxeremote/os_controller/setRunList',this.osDriver.getRunList());
+    socket.emit('tuxRemote/osController/setRunList', this.osDriver.getRunList());
   }
 
   /**
    * asking focus
    * @param args focusId
    */
-  @hook("tuxeRemote/osController/getFocus")
+  @hook("tuxRemote/osController/getFocus", () => OsController.getInstance())
   public getFocus(socket: any, args: any[]) {
     this.onFocusChangeLowLevel(socket, this.osDriver.getFocus() );
   }
@@ -87,7 +87,7 @@ export class OsController implements OsInterface{
    * asking sound
    * @param args emmpty
    */
-  @hook("tuxeRemote/osController/getSound")
+  @hook("tuxRemote/osController/getSound", () => OsController.getInstance())
   public getSound(socket: any, args: any[]) {
     this.onSoundChangeLowLevel(socket, this.osDriver.getSound() );
   }
@@ -96,7 +96,7 @@ export class OsController implements OsInterface{
    * set the focus on window
    * @param args windowId
    */
-  @hook("tuxeRemote/osController/setFocus")
+  @hook("tuxRemote/osController/setFocus", () => OsController.getInstance())
   public setFocus(socket: any, args: any[]) {
     this.osDriver.setFocus(args[0]);
   }
@@ -105,7 +105,7 @@ export class OsController implements OsInterface{
    * set the sound level
    * @param args percent of the sound asking
    */
-  @hook("tuxeRemote/osController/setSound")
+  @hook("tuxRemote/osController/setSound", () => OsController.getInstance())
   public setSound(socket: any, args: any[]) {
     this.osDriver.setSound(args[0]);
   }
@@ -114,7 +114,7 @@ export class OsController implements OsInterface{
    * kill an application by applicationId
    * @param args applicationId to killed
    */
-  @hook("tuxeRemote/osController/kill")
+  @hook("tuxRemote/osController/kill", () => OsController.getInstance())
   public kill(socket: any, args: any[]) {
     this.osDriver.kill(args[0]);
   }
@@ -123,26 +123,26 @@ export class OsController implements OsInterface{
    * opening an application by command
    * @param args string command
    */
-  @hook("tuxeRemote/osController/open")
+  @hook("tuxRemote/osController/open", () => OsController.getInstance())
   public open(socket: any, args: any[]) {
     this.osDriver.open(args[0]);
   }
 
   public onOpens(applications: ApplicationDto[]): Promise<any>{
     if(applications.length>0){
-      io.emit('tuxeremote/osController/focusChange',applications);
+      io.emit('tuxRemote/osController/applicationsOpened',applications);
       console.log("OPEN ", applications.map(app=>({name:app.name, id:app.id})), );
     }
     return new Promise(resolve=>resolve());
   }
 
   public onChanges(applications: ApplicationDto[], diff:any){
-    io.emit('tuxeremote/osController/applicationsChanged',diff);
+    io.emit('tuxRemote/osController/applicationsChanged',diff);
     console.log("change ", applications, diff);
   }
 
   public onCloses(applications: String[]){
-    io.emit('tuxeremote/osController/applicationsClosed',applications);
+    io.emit('tuxRemote/osController/applicationsClosed',applications);
     console.log("close ", applications)
   }
 
@@ -151,7 +151,7 @@ export class OsController implements OsInterface{
    * moving mouse
    * @param args {x:X, y:Y}
    */
-  @hook("tuxeRemote/osController/moveMouse")
+  @hook("tuxRemote/osController/moveMouse")
   public moveMouse(socket: any, args: any[]){
     let mouse = new MousePosition();
     mouse.x = args[0].x;
@@ -166,8 +166,8 @@ export class OsController implements OsInterface{
   }
 
   private onFocusChangeLowLevel(socket: any, application: ApplicationDto){
-    socket.emit('tuxeremote/osController/focusChange',{id:application.id, window:application.focusId});
-    console.log("FOCUS app:",application.name, " title:", application.windows[application.focusId].title)
+    socket.emit('tuxRemote/osController/focusChange',{id:application.id, window:application.focusId});
+    console.log("FOCUS app:",application.id, " title:", application.windows[application.focusId].title)
   }
 
   public onSoundChange(sound: number){
@@ -175,7 +175,7 @@ export class OsController implements OsInterface{
   }
 
   private onSoundChangeLowLevel(socket: any, sound: number){
-    socket.emit('tuxeremote/osController/soundChange',sound);
+    socket.emit('tuxRemote/osController/soundChange',sound);
     console.log("SOUND ",sound, "%");
   }
 
