@@ -92,6 +92,7 @@ export class ApplicationDto {
       if(window.id && !application.windows[window.id]){
         result["closed"].push(window);
         this.windows[window.id] = undefined;
+        delete this.windows[window.id];
       }
     });
 

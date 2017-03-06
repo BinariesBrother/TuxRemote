@@ -110,7 +110,10 @@ export class LinuxDriver implements OsDriver {
     if(openedApplications.length>0){
       promise.push(this.openedApplications(openedApplications));
     }
-    return Promise.all(promise);
+    return Promise.all(promise).catch(error=>{
+      logger.error(error);
+      this.liberateTokenError();
+    });;
   }
   private async killedApplications(killedApplications: ApplicationDto[]){
     let closes = killedApplications.map(app=>app.id);
@@ -142,15 +145,25 @@ export class LinuxDriver implements OsDriver {
             this.oldRun[applicationId] = app;
           }
           return new Promise(resolve=>resolve(app));
-        }).catch(error=>logger.error(error)));
+        }).catch(error=>{
+              logger.error(error);
+              this.liberateTokenError();
+            }));
       })
       Promise.all(appromise.filter(prom=>prom))
         .then(applicationsDto=>
           this.father.onOpens(applicationsDto.filter(prom=>prom)))
-        .catch(error=>logger.error(error));
+        .catch(error=>{
+          logger.error(error);
+          this.liberateTokenError();
+        });
     });
   }
 
+  private liberateTokenError(){
+    this.oldRun = {};
+    this.liberateToken();
+  }
   private liberateToken(){
     this.token--;
     if(this.token<=0){
@@ -187,7 +200,10 @@ export class LinuxDriver implements OsDriver {
       this.focusIntervalCallback();
       this.soundIntervalCallback();
       this.liberateToken();
-    })
+    }).catch(error=>{
+      logger.error(error);
+      this.liberateTokenError();
+    });
   }
 
   private runIntervalCallback() {
