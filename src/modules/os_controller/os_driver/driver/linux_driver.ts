@@ -137,7 +137,9 @@ export class LinuxDriver implements OsDriver {
             app.windows = run[app.id].windows;
             this.oldRun[app.id]=app;
           }else{
-            this.oldRun[applicationId] = openedApplications.filter(opened=>opened.id==applicationId)[0];
+            app = openedApplications
+              .filter(opened=>opened.id==applicationId)[0];
+            this.oldRun[applicationId] = app;
           }
           return new Promise(resolve=>resolve(app));
         }).catch(error=>logger.error(error)));
