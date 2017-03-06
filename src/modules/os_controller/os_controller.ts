@@ -132,19 +132,19 @@ export class OsController implements OsInterface{
   public onOpens(applications: ApplicationDto[]): Promise<any>{
     if(applications.length>0){
       io.emit('tuxRemote/osController/applicationsOpened',applications);
-      logger.info("OPEN ", applications.map(app=>({name:app.name, id:app.id})), );
+      logger.trace("OPEN ", applications.map(app=>({name:app.name, id:app.id})), );
     }
     return new Promise(resolve=>resolve());
   }
 
   public onChanges(applications: ApplicationDto[], diff:any){
     io.emit('tuxRemote/osController/applicationsChanged',diff);
-    logger.info("CHANGE ", applications, diff);
+    logger.trace("CHANGE ", applications, diff);
   }
 
   public onCloses(applications: String[]){
     io.emit('tuxRemote/osController/applicationsClosed',applications);
-    logger.info("CLOSE ", applications)
+    logger.trace("CLOSE ", applications)
   }
 
 
@@ -168,7 +168,7 @@ export class OsController implements OsInterface{
 
   private onFocusChangeLowLevel(socket: any, application: ApplicationDto){
     socket.emit('tuxRemote/osController/focusChange',{id:application.id, window:application.focusId});
-    logger.info("FOCUS app:",application.id, " title:", application.windows[application.focusId].title)
+    logger.trace("FOCUS app:",application.id, " title:", application.windows[application.focusId].title)
   }
 
   public onSoundChange(sound: number){
@@ -177,7 +177,7 @@ export class OsController implements OsInterface{
 
   private onSoundChangeLowLevel(socket: any, sound: number){
     socket.emit('tuxRemote/osController/soundChange',sound);
-    logger.info("SOUND ",sound, "%");
+    logger.trace("SOUND ",sound, "%");
   }
 
 }
