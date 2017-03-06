@@ -11,6 +11,7 @@ import {ApplicationRepository} from './model/repository/ApplicationRepository';
 import {invoke, defineHook, defineHooks, hook} from "../hooks/hooks";
 
 import {io} from "../server/server";
+import * as logger from "node-yolog"
 
 
 export class OsController implements OsInterface{
@@ -131,19 +132,19 @@ export class OsController implements OsInterface{
   public onOpens(applications: ApplicationDto[]): Promise<any>{
     if(applications.length>0){
       io.emit('tuxRemote/osController/applicationsOpened',applications);
-      console.log("OPEN ", applications.map(app=>({name:app.name, id:app.id})), );
+      logger.info("OPEN ", applications.map(app=>({name:app.name, id:app.id})), );
     }
     return new Promise(resolve=>resolve());
   }
 
   public onChanges(applications: ApplicationDto[], diff:any){
     io.emit('tuxRemote/osController/applicationsChanged',diff);
-    console.log("change ", applications, diff);
+    logger.info("CHANGE ", applications, diff);
   }
 
   public onCloses(applications: String[]){
     io.emit('tuxRemote/osController/applicationsClosed',applications);
-    console.log("close ", applications)
+    logger.info("CLOSE ", applications)
   }
 
 
@@ -167,7 +168,7 @@ export class OsController implements OsInterface{
 
   private onFocusChangeLowLevel(socket: any, application: ApplicationDto){
     socket.emit('tuxRemote/osController/focusChange',{id:application.id, window:application.focusId});
-    console.log("FOCUS app:",application.id, " title:", application.windows[application.focusId].title)
+    logger.info("FOCUS app:",application.id, " title:", application.windows[application.focusId].title)
   }
 
   public onSoundChange(sound: number){
@@ -176,7 +177,7 @@ export class OsController implements OsInterface{
 
   private onSoundChangeLowLevel(socket: any, sound: number){
     socket.emit('tuxRemote/osController/soundChange',sound);
-    console.log("SOUND ",sound, "%");
+    logger.info("SOUND ",sound, "%");
   }
 
 }
