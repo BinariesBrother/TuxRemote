@@ -12,6 +12,8 @@
 <link rel="import" href="app-icons.html">
 <link rel="import" href="elements/running-app-list.html">
 
+<link rel="import" href="behaviors/socket-behavior.html">
+
 <dom-module id="tux-remote">
   <template>
     <style include="app-theme">
@@ -35,7 +37,7 @@
 
     <app-drawer-layout id="drawerLayout" fullbleed>
 
-      <app-drawer>
+      <app-drawer id="drawer">
         <running-app-list selected="{{selected}}"></running-app-list>
       </app-drawer>
 
@@ -49,13 +51,13 @@
             <app-toolbar>
               <iron-image id="appToolbarImage" class="app-icon" sizing="cover"
                           src="{{selected.icon}}"></iron-image>
-              <div custom-spacer$="{{_checkIcon(selected)}}">{{selected.name}}</div>
+              <div custom-spacer$="{{_checkIcon(selected)}}">{{_computeName(selected)}}</div>
             </app-toolbar>
             <app-toolbar>
-              <paper-tabs selected="0">
-                <paper-tab>TAB 1</paper-tab>
-                <paper-tab>TAB 2</paper-tab>
-                <paper-tab>TAB 3</paper-tab>
+              <paper-tabs id="windows" attr-for-selected="wmctrl" on-iron-items-changed="_onWindowsChanged">
+                <template is="dom-repeat" items="{{_computeWindows(selected)}}" as="window">
+                  <paper-tab wmctrl="{{window.id}}">{{window.title}}</paper-tab>
+                </template>
               </paper-tabs>
             </app-toolbar>
           </div>
@@ -69,6 +71,10 @@
   <script>
     Polymer({
       is: 'tux-remote',
+
+      behaviors: [
+        TuxRemote.SocketBehavior,
+      ],
 
       properties: {
         /**
@@ -87,7 +93,7 @@
           this.$.drawer.close();
         }
         // Animate the app-header ripple
-        if (this.$.appToolbarImage && this.selected.icon != undefined) {
+        if (this.$.appToolbarImage) {
           var rect = this.$.appToolbarImage.getBoundingClientRect();
           this.$.toolbarRipple.downAction({
             detail: {
@@ -101,8 +107,27 @@
         }
       },
 
+      _onWindowsChanged: function(event, detail) {
+        var _windows = detail.addedNodes.filter(function(elt) { return elt.localName && elt.localName == 'paper-tab' });
+        for (var i in _windows) {
+          if (_windows[i].wmctrl == this.selected.focusId) {
+            this.$.windows.selectIndex(i);
+          }
+        }
+      },
+
       _checkIcon: function(selected) {
         return (selected.icon !== '')? true : false;
+      },
+
+      _computeWindows: function(selected) {
+        if (selected.windows) {
+          return Object.keys(selected.windows).map(function(key) { return selected.windows[key]; });
+        }
+      },
+
+      _computeName: function(application) {
+        return application.name || application.id;
       },
     });
   </script>

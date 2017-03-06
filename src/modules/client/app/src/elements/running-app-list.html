@@ -31,7 +31,7 @@
           </div>
         </app-toolbar>
       </app-header>
-      <paper-listbox id="list" on-iron-select="_onItemSelect" selected="{{selected.id}}" attr-for-selected="name">
+      <paper-listbox id="list" on-iron-select="_onItemSelect" attr-for-selected="name">
         <template is="dom-repeat" items="{{applications}}" as="application">
           <app-item name="{{application.id}}" application="{{application}}"></app-item>
         </template>
@@ -65,17 +65,17 @@
       ready: function() {
         this.socketListen('tuxRemote/osController/setRunList', this._onSetRunList.bind(this));
         this.socketListen('tuxRemote/osController/applicationsOpened', function() {
-          // console.log('applicationsOpened', arguments);
+          console.log('applicationsOpened', arguments);
         });
         this.socketListen('tuxRemote/osController/applicationsChanged', function() {
-          // console.log('applicationsChanged', arguments);
+          console.log('applicationsChanged', arguments);
         });
         this.socketListen('tuxRemote/osController/applicationsClosed', function() {
-          // console.log('applicationsClosed', arguments);
+          console.log('applicationsClosed', arguments);
         });
         this.socketListen('tuxRemote/osController/focusChange', this._onFocusChanged.bind(this));
         this.socketListen('tuxRemote/osController/soundChange', function() {
-          // console.log('soundChange', arguments);
+          console.log('soundChange', arguments);
         });
         this.socketEmit('tuxRemote/osController/getRunList');
       },
@@ -86,9 +86,15 @@
             this.push('applications', list[id]);
           }
         }
+        this.socketEmit('tuxRemote/osController/getFocus');
       },
 
       _onFocusChanged: function(app) {
+        for (var i in this.$.list.items) {
+          if (this.$.list.items[i].application.id == app.id) {
+            this.$.list.items[i].application.focusId = app.window;
+          }
+        }
         this.$.list.select(app.id);
       },
 

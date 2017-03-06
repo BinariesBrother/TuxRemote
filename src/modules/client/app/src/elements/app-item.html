@@ -71,7 +71,7 @@
       },
 
       _onTap: function(event) {
-        if (!event.detail.x && this.application.icon != undefined) {
+        if (!event.detail.x) {
           var rect = this.$.icon.getBoundingClientRect();
           event.detail = {
             x: rect.left + (rect.width / 2),
