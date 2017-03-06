@@ -177,7 +177,7 @@ export class LinuxDriver implements OsDriver {
     if (parameters.length<2) { return; }
     let focus = this.oldRun[parameters[1].toUpperCase()];
     let focusId = parameters[0];
-    if(focus && (!this.focus || (focus.id != this.focus.id || focusId != this.focus.focusId))){
+    if(focus && focus.windows[focusId] && (!this.focus || (focus.id != this.focus.id || focusId != this.focus.focusId))){
       this.focus = focus;
       this.focus.focusId = focusId;
       this.father.onFocusChange(this.focus);
