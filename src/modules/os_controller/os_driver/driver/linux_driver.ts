@@ -140,12 +140,12 @@ export class LinuxDriver implements OsDriver {
             this.oldRun[applicationId] = openedApplications.filter(opened=>opened.id==applicationId)[0];
           }
           return new Promise(resolve=>resolve(app));
-        }).catch(error=>console.log(error)));
+        }).catch(error=>logger.error(error)));
       })
       Promise.all(appromise.filter(prom=>prom))
         .then(applicationsDto=>
           this.father.onOpens(applicationsDto.filter(prom=>prom)))
-        .catch(error=>console.log(error));
+        .catch(error=>logger.error(error));
     });
   }
 

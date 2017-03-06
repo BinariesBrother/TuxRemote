@@ -12,6 +12,7 @@ import {ViewRepository}  from "./repository/ViewRepository"
 import * as connectionManager from "./repository/Connection";
 import {deserialize, serialize} from 'json-typescript-mapper';
 import {getJson} from "./init";
+import * as logger from 'node-yolog';
 
 export async function init() : Promise<Object> {
   let connectionMere = await connectionManager.session();
@@ -29,7 +30,7 @@ function initDb(connection, init){
     viewPromises = [];
     init.applications.forEach(app=>viewPromises.push(initApplication(connection, app)));
     let last = Promise.all(viewPromises);
-    last.catch(error=>console.log(error));
+    last.catch(error=>logger.error(error));
     return last;
   });
 }
@@ -87,11 +88,3 @@ function initApplication(connection, application){
       });
     });
 }
-
-/*
-{
-        "id":"SMPLAYER.SMPLAYER",
-        "name":"SMPlayer",
-        "view":"Player",
-        "commands":null
-    } */
