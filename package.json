@@ -23,6 +23,7 @@
     "json-typescript-mapper": "^1.1.1",
     "node-yolog": "^1.0.0",
     "reflect-metadata": "^0.1.9",
+    "robotjs": "^0.4.5",
     "sequelize": "^3.30.1",
     "socket.io": "^1.7.2",
     "sqlite3": "^3.1.8",
