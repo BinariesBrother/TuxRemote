@@ -1,0 +1,132 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<dom-module id="custom-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div id="items" role="list">
+      <content id="content"></content>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'custom-list',
+
+      properties: {
+        /**
+         * The item list.
+         */
+        items: {
+          type: Array,
+          value: [],
+        },
+
+        /**
+         * The attribute to use on list to look up the item.
+         */
+        attrForSelected: {
+          type: String,
+          value: '',
+        },
+
+        /**
+         * The item list keyed by attrForSelected. Used internaly.
+         */
+        _items: {
+          type: Object,
+          value: {},
+        },
+      },
+
+      ready: function() {
+        this._observer = Polymer.dom(this.$.content).observeNodes(function(info) {
+          this._processNewNodes(info.addedNodes.filter(this._filterNodes));
+          this._processRemovedNodes(info.removedNodes.filter(this._filterNodes));
+        }.bind(this));
+      },
+
+      _processNewNodes: function(nodes) {
+        for (var i in nodes) {
+          var node = nodes[i];
+          node.setAttribute('role', 'listitem');
+          this.listen(node, 'tap', '_onItemTap');
+          var key = this.items.length;
+          this.push('items', node);
+          if (this.attrForSelected) {
+            key = node[this.attrForSelected];
+          }
+          this._items[key] = node;
+        }
+      },
+
+      _processRemovedNodes: function(nodes) {
+        for (var i in nodes) {
+          var node = nodes[i];
+          this.unlisten(node, 'tap', '_onItemTap');
+          for (var i in this._items) {
+            if (node == this._items[i]) {
+              delete this._items[i];
+            }
+          }
+          this.arrayDelete('items', node);
+        }
+      },
+
+      _filterNodes: function(e) {
+        return e.localName && e.localName != 'template';
+      },
+
+      _onItemTap: function(event) {
+        var found = undefined, index = 0;
+        while (!found && index < this.items.length) {
+          if (this.items[index] == event.target) {
+            found = this.items[index];
+          }
+          index++;
+        }
+        if (found) {
+          this.select((this.attrForSelected)? found[this.attrForSelected] : index);
+        }
+      },
+
+      /**
+       * Select an item.
+       * @param {Number|String} index The index to select. According to the attrForSelected property.
+       * @param {Boolean} force Force the selection, don't trigger the select event.
+       */
+      select: function(index, force = false) {
+        var elt = this._items[index], _select = false;
+        if (!force) {
+          var event = this.fire('select', elt, { bubbles: false, cancelable: true });
+          _select = event.defaultPrevented;
+        }
+        if (!_select) {
+          this.deselectAll();
+          elt.setAttribute('aria-selected', true);
+          this.toggleClass('iron-selected', true, elt);
+        }
+      },
+
+      /**
+       * Deselect an item.
+       * @param {Number|String} index The index to select. According to the attrForSelected property.
+       */
+      deselect: function(index) {
+        var elt = this._items[index];
+        elt.setAttribute('aria-selected', false);
+        this.toggleClass('iron-selected', false, elt);
+      },
+
+      deselectAll: function() {
+        for (var i in this.items) {
+          this.deselect((this.attrForSelected)? this.items[i][this.attrForSelected] : i);
+        }
+      },
+    });
+  </script>
+</dom-module>
