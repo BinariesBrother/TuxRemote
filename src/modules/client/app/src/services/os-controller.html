@@ -83,6 +83,7 @@ TuxRemote.osController = {
           }
         }
       }
+      this._fixFocusId();
       this.fire_('windows-changed', change);
     },
 
@@ -97,6 +98,17 @@ TuxRemote.osController = {
     _onFocusChanged: function(app) {
       this.runningApps[app.id].focusId = app.window;
       this.fire_('focus-changed', app);
+    },
+
+    _fixFocusId: function() {
+      for (var i in this.runningApps) {
+        var app = this.runningApps[i];
+        if (!app.windows.hasOwnProperty(app.focusId)) {
+          if (Object.keys(app.windows).length > 0) {
+            app.focusId = app.windows[Object.keys(app.windows)[0]].id;
+          }
+        }
+      }
     },
 
   });

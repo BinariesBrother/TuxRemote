@@ -62,7 +62,10 @@
             <app-toolbar>
               <paper-tabs id="windows" scrollable hide-scroll-buttons attr-for-selected="wmctrl">
                 <template is="dom-repeat" items="{{windows}}" as="window">
-                  <paper-tab wmctrl="{{window.id}}">{{window.title}}</paper-tab>
+                  <paper-tab wmctrl="{{window.id}}" on-tap="_setWindowFocus">
+                    {{window.title}}
+                    <!--<paper-icon-button icon="app-icons:close" wmctrl="{{window.id}}" on-tap="_closeWindow" ></paper-icon-button>-->
+                  </paper-tab>
                 </template>
               </paper-tabs>
             </app-toolbar>
@@ -147,6 +150,17 @@
           }, 500);
         }
       },
+
+      _setWindowFocus: function(event) {
+        if (event.target.localName == 'paper-tab') {
+          this.socketEmit('tuxRemote/osController/setFocus', event.target.wmctrl);
+        }
+      },
+
+      // _closeWindow: function(event) {
+      //   console.log(event.target.wmctrl);
+      //   this.socketEmit('tuxRemote/osController/closeWindow', event.target.wmctrl);
+      // },
 
       _checkIcon: function(selected) {
         return (selected.icon !== '')? true : false;

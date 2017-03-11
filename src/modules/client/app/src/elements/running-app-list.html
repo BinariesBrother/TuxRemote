@@ -8,8 +8,9 @@
 <link rel="import" href="../app-theme.html">
 <link rel="import" href="../app-icons.html">
 <link rel="import" href="app-item.html">
+<link rel="import" href="custom-list.html">
 
-<!--<link rel="import" href="../behaviors/socket-behavior.html">-->
+<link rel="import" href="../behaviors/socket-behavior.html">
 <link rel="import" href="../services/os-controller.html">
 
 <dom-module id="running-app-list">
@@ -34,16 +35,20 @@
           </div>
         </app-toolbar>
       </app-header>
-      <paper-listbox id="list" attr-for-selected="name">
+      <custom-list id="list" attr-for-selected="name" on-select="_onSelect">
         <template is="dom-repeat" items="{{applications}}" as="application">
           <app-item name="{{application.id}}" application="{{application}}"></app-item>
         </template>
-      </paper-listbox>
+      </custom-list>
     </app-header-layout>
   </template>
   <script>
     Polymer({
       is: 'running-app-list',
+
+      behaviors: [
+        TuxRemote.SocketBehavior,
+      ],
 
       properties: {
         applications: {
@@ -78,7 +83,14 @@
       },
 
       _onFocusChanged: function(event, app) {
-        this.$.list.select(app.id);
+        // the focus is sent by the server, by-pass the user-select behavior.
+        this.$.list.select(app.id, true);
+      },
+
+      _onSelect: function(event, node) {
+        // prevent set aria-selected to true.
+        event.preventDefault();
+        this.socketEmit('tuxRemote/osController/setFocus', node.application.focusId);
       },
 
     });
