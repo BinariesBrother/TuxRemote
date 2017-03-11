@@ -9,7 +9,8 @@
 <link rel="import" href="../app-icons.html">
 <link rel="import" href="app-item.html">
 
-<link rel="import" href="../behaviors/socket-behavior.html">
+<!--<link rel="import" href="../behaviors/socket-behavior.html">-->
+<link rel="import" href="../services/os-controller.html">
 
 <dom-module id="running-app-list">
   <template>
@@ -23,6 +24,8 @@
         background-color: var(--paper-blue-grey-800);
       }
     </style>
+    <os-controller id="osController"></os-controller>
+
     <app-header-layout has-scrolling-region>
       <app-header condenses fixed>
         <app-toolbar>
@@ -31,7 +34,7 @@
           </div>
         </app-toolbar>
       </app-header>
-      <paper-listbox id="list" on-iron-select="_onItemSelect" attr-for-selected="name">
+      <paper-listbox id="list" attr-for-selected="name">
         <template is="dom-repeat" items="{{applications}}" as="application">
           <app-item name="{{application.id}}" application="{{application}}"></app-item>
         </template>
@@ -42,65 +45,42 @@
     Polymer({
       is: 'running-app-list',
 
-      behaviors: [
-        TuxRemote.SocketBehavior,
-      ],
-
       properties: {
         applications: {
           type: Array,
           value: [],
         },
-
-        /**
-         * The current focused application.
-         */
-        selected: {
-          type: Object,
-          notify: true,
-          value: {},
-        },
       },
 
-      ready: function() {
-        this.socketListen('tuxRemote/osController/setRunList', this._onSetRunList.bind(this));
-        this.socketListen('tuxRemote/osController/applicationsOpened', function() {
-          console.log('applicationsOpened', arguments);
-        });
-        this.socketListen('tuxRemote/osController/applicationsChanged', function() {
-          console.log('applicationsChanged', arguments);
-        });
-        this.socketListen('tuxRemote/osController/applicationsClosed', function() {
-          console.log('applicationsClosed', arguments);
-        });
-        this.socketListen('tuxRemote/osController/focusChange', this._onFocusChanged.bind(this));
-        this.socketListen('tuxRemote/osController/soundChange', function() {
-          console.log('soundChange', arguments);
-        });
-        this.socketEmit('tuxRemote/osController/getRunList');
+      listeners: {
+        'osController.set-run-list': '_onSetInit',
+        'osController.apps-opened': '_onAppsOpened',
+        'osController.before-apps-closed': '_onAppsClosed',
+        'osController.focus-changed': '_onFocusChanged',
       },
 
-      _onSetRunList: function(list) {
-        for (var id in list) {
-          if (list.hasOwnProperty(id)) {
-            this.push('applications', list[id]);
-          }
+      _onSetInit: function(event, list) {
+        for (var id in this.$.osController.runningApps) {
+          this.push('applications', this.$.osController.runningApps[id]);
         }
-        this.socketEmit('tuxRemote/osController/getFocus');
       },
 
-      _onFocusChanged: function(app) {
-        for (var i in this.$.list.items) {
-          if (this.$.list.items[i].application.id == app.id) {
-            this.$.list.items[i].application.focusId = app.window;
-          }
+      _onAppsOpened: function(event, apps) {
+        for (var i in apps) {
+          this.push('applications', this.$.osController.runningApps[apps[i].id]);
         }
+      },
+
+      _onAppsClosed: function(event, apps) {
+        for (var i in apps) {
+          this.arrayDelete('applications', this.$.osController.runningApps[apps[i]]);
+        }
+      },
+
+      _onFocusChanged: function(event, app) {
         this.$.list.select(app.id);
       },
 
-      _onItemSelect: function(event, detail) {
-        this.set('selected', detail.item.application);
-      },
     });
   </script>
 </dom-module>

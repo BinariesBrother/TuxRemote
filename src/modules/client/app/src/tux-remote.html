@@ -12,7 +12,7 @@
 <link rel="import" href="app-icons.html">
 <link rel="import" href="elements/running-app-list.html">
 
-<link rel="import" href="behaviors/socket-behavior.html">
+<link rel="import" href="services/os-controller.html">
 
 <dom-module id="tux-remote">
   <template>
@@ -33,15 +33,21 @@
         color: black;
       }
 
+      paper-tabs {
+        width: 100%;
+      }
+
     </style>
+
+    <os-controller id="osController"></os-controller>
 
     <app-drawer-layout id="drawerLayout" fullbleed>
 
-      <app-drawer id="drawer">
-        <running-app-list selected="{{selected}}"></running-app-list>
+      <app-drawer id="drawer" swipe-open>
+        <running-app-list></running-app-list>
       </app-drawer>
 
-      <app-header-layout has-scrolling-region>
+      <app-header-layout>
         <app-header condenses fixed>
           <app-toolbar>
             <paper-icon-button icon="app-icons:menu" drawer-toggle></paper-icon-button>
@@ -50,12 +56,12 @@
           <div sticky>
             <app-toolbar>
               <iron-image id="appToolbarImage" class="app-icon" sizing="cover"
-                          src="{{selected.icon}}"></iron-image>
-              <div custom-spacer$="{{_checkIcon(selected)}}">{{_computeName(selected)}}</div>
+                          src="{{current.icon}}"></iron-image>
+              <div custom-spacer$="{{_checkIcon(current)}}">{{_computeName(current)}}</div>
             </app-toolbar>
             <app-toolbar>
-              <paper-tabs id="windows" attr-for-selected="wmctrl" on-iron-items-changed="_onWindowsChanged">
-                <template is="dom-repeat" items="{{_computeWindows(selected)}}" as="window">
+              <paper-tabs id="windows" scrollable hide-scroll-buttons attr-for-selected="wmctrl">
+                <template is="dom-repeat" items="{{windows}}" as="window">
                   <paper-tab wmctrl="{{window.id}}">{{window.title}}</paper-tab>
                 </template>
               </paper-tabs>
@@ -77,17 +83,52 @@
       ],
 
       properties: {
+        windows: {
+          type: Array,
+          value: [],
+        },
+
         /**
-         * The current selected application. See running-app-list element.
+         * The focused application.
          */
-        selected: {
+        current: {
           type: Object,
           value: {},
-          observer: '_onSelectedChanged',
+          observer: '_onCurrentChanged',
         },
       },
 
-      _onSelectedChanged: function() {
+      listeners: {
+        'osController.windows-changed': '_onWindowsChanged',
+        'osController.focus-changed': '_onFocusChanged',
+      },
+
+      _onWindowsChanged: function(event) {
+        this._updateWindows();
+      },
+
+      _onFocusChanged: function(event, app) {
+        this.set('current', this.$.osController.runningApps[app.id]);
+        this._updateWindows();
+      },
+
+      _updateWindows: function() {
+        this.set('windows', []);
+        for (var i in this.current.windows) {
+          this.push('windows', this.current.windows[i]);
+        }
+
+        // fix paper tabs select.
+        if (this.windowsAsyncHandle) {
+          this.cancelAsync(this.windowsAsyncHandle);
+        }
+        this.windowsAsyncHandle = this.async(function() {
+          this.$.windows.select(this.current.focusId);
+          delete this.windowsAsyncHandle;
+        }.bind(this), 200);
+      },
+
+      _onCurrentChanged: function() {
         // Close the drawer
         if (this.$.drawerLayout.narrow) {
           this.$.drawer.close();
@@ -104,15 +145,6 @@
           this.async(function() {
             this.$.toolbarRipple.upAction();
           }, 500);
-        }
-      },
-
-      _onWindowsChanged: function(event, detail) {
-        var _windows = detail.addedNodes.filter(function(elt) { return elt.localName && elt.localName == 'paper-tab' });
-        for (var i in _windows) {
-          if (_windows[i].wmctrl == this.selected.focusId) {
-            this.$.windows.selectIndex(i);
-          }
         }
       },
 

@@ -1,0 +1,104 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<link rel="import" href="../behaviors/socket-behavior.html">
+
+<script>
+TuxRemote.osController = {
+  firstTime: true,
+  runningApps: {},
+};
+(function() {
+  var instances = [];
+
+  Polymer({
+    is: 'os-controller',
+
+    behaviors: [
+      TuxRemote.SocketBehavior
+    ],
+
+    attached: function() {
+      instances.push(this);
+    },
+
+    detached: function() {
+      var i = instances.indexOf(this);
+      if (i >= 0) {
+        instances.splice(i, 1);
+      }
+    },
+
+    get runningApps () {
+      return TuxRemote.osController.runningApps;
+    },
+
+    fire_: function(event, data) {
+      for (var i in instances) {
+        instances[i].fire(event, data, { bubbles: false });
+      }
+    },
+
+    created: function() {
+      if (TuxRemote.osController.firstTime) {
+        this.socketListen('tuxRemote/osController/setRunList', this._onSetRunList.bind(this));
+        this.socketListen('tuxRemote/osController/applicationsOpened', this._onAppOpened.bind(this));
+        this.socketListen('tuxRemote/osController/windowsChanged', this._onWindowsChanged.bind(this));
+        this.socketListen('tuxRemote/osController/applicationsClosed', this._onAppClosed.bind(this));
+        this.socketListen('tuxRemote/osController/focusChange', this._onFocusChanged.bind(this));
+        this.socketListen('tuxRemote/osController/soundChange', function() {
+          console.log('soundChange', arguments);
+        });
+        this.socketEmit('tuxRemote/osController/getRunList');
+        TuxRemote.osController.firstTime = false;
+      }
+    },
+
+    _onSetRunList: function(list) {
+      TuxRemote.osController.runningApps = list;
+      this.fire_('set-run-list', this.runningApps);
+      this.socketEmit('tuxRemote/osController/getFocus');
+    },
+
+    _onAppOpened: function(applications) {
+      for (var i in applications) {
+        var app = applications[i];
+        this.runningApps[app.id] = app;
+      }
+      this.fire_('apps-opened', applications);
+    },
+
+    _onWindowsChanged: function(change) {
+      this.fire_('before-windows-changed', change);
+      for (var id in change) {
+        for (var action in change[id]) {
+          var windows = change[id][action];
+          for (var i in windows) {
+            var window = windows[i];
+            if (this.runningApps[id].windows) {
+              this.runningApps[id].windows[window.id] = window;
+              if (action == 'closed') {
+                delete this.runningApps[id].windows[window.id];
+              }
+            }
+          }
+        }
+      }
+      this.fire_('windows-changed', change);
+    },
+
+    _onAppClosed: function(apps) {
+      this.fire_('before-apps-closed', apps);
+      for (var i in apps) {
+        delete this.runningApps[apps[i]];
+      }
+      this.fire_('apps-closed', apps);
+    },
+
+    _onFocusChanged: function(app) {
+      this.runningApps[app.id].focusId = app.window;
+      this.fire_('focus-changed', app);
+    },
+
+  });
+})();
+</script>

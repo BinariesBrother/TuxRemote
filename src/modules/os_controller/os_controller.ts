@@ -138,7 +138,7 @@ export class OsController implements OsInterface{
   }
 
   public onChanges(applications: ApplicationDto[], diff:any){
-    io.emit('tuxRemote/osController/applicationsChanged',diff);
+    io.emit('tuxRemote/osController/windowsChanged',diff);
     logger.trace("CHANGE ", applications, diff);
   }
 

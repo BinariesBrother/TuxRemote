@@ -3,7 +3,7 @@
 
 <script>
 
-  var socket = io(window.location.origin);
+  TuxRemote.socket = io(window.location.origin);
 
   TuxRemote.SocketBehavior = {
 
@@ -11,8 +11,8 @@
      * Attach a callback to a socket event.
      */
     socketListen: function(event, callback) {
-      if (socket) {
-        socket.on(event, callback);
+      if (TuxRemote.socket) {
+        TuxRemote.socket.on(event, callback);
       }
     },
 
@@ -20,8 +20,8 @@
      * Send an event (with arguments) to the server.
      */
     socketEmit: function(event) {
-      if (socket && event !== '') {
-        socket.emit.apply(socket, arguments);
+      if (TuxRemote.socket && event !== '') {
+        TuxRemote.socket.emit.apply(TuxRemote.socket, arguments);
       }
     },
 
