@@ -49,6 +49,11 @@ TuxRemote.osController = {
           console.log('soundChange', arguments);
         });
         this.socketEmit('tuxRemote/osController/getRunList');
+
+        // Handle client reconnection.
+        this.socketListen('reconnect', function() {
+          this.socketEmit('tuxRemote/osController/getRunList');
+        }.bind(this));
         TuxRemote.osController.firstTime = false;
       }
     },

@@ -1,4 +1,5 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="/bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
@@ -7,6 +8,8 @@
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="/bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="/bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/bower_components/paper-spinner/paper-spinner-lite.html">
 
 <link rel="import" href="app-theme.html">
 <link rel="import" href="app-icons.html">
@@ -16,7 +19,7 @@
 
 <dom-module id="tux-remote">
   <template>
-    <style include="app-theme">
+    <style include="app-theme iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
@@ -35,6 +38,10 @@
 
       paper-tabs {
         width: 100%;
+      }
+
+      paper-spinner-lite {
+        --paper-spinner-color: var(--paper-orange-700);
       }
 
     </style>
@@ -73,6 +80,14 @@
           <paper-ripple id="toolbarRipple" noink></paper-ripple>
         </app-header>
         <div class="content"></div>
+        <paper-toast id="paperToastReconnect" duration="0" horizontal-align="right">
+          <div id="paperToastContent" class="layout horizontal center-center">
+            <div>The server does not seem to respond. Attempting reconnection in progress.</div>
+            <div>
+              <paper-spinner-lite id="paperSpinnerReconnect" active></paper-spinner-lite>
+            </div>
+          </div>
+        </paper-toast>
       </app-header-layout>
     </app-drawer-layout>
 
@@ -104,6 +119,18 @@
       listeners: {
         'osController.windows-changed': '_onWindowsChanged',
         'osController.focus-changed': '_onFocusChanged',
+      },
+
+      ready: function() {
+        this.$.paperToastReconnect.sizingTarget = this.$.paperToastContent;
+        this.socketListen('disconnect',  function() {
+          this.$.paperToastReconnect.show();
+          this.$.paperSpinnerReconnect.active = true;
+        }.bind(this));
+        this.socketListen('reconnect',  function() {
+          this.$.paperToastReconnect.close();
+          this.$.paperSpinnerReconnect.active = false;
+        }.bind(this));
       },
 
       _onWindowsChanged: function(event) {
