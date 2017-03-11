@@ -64,6 +64,7 @@
       },
 
       _onSetInit: function(event, list) {
+        this.set('applications', []);
         for (var id in this.$.osController.runningApps) {
           this.push('applications', this.$.osController.runningApps[id]);
         }
