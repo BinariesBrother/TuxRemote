@@ -60,9 +60,9 @@
               <div custom-spacer$="{{_checkIcon(current)}}">{{_computeName(current)}}</div>
             </app-toolbar>
             <app-toolbar>
-              <paper-tabs id="windows" scrollable hide-scroll-buttons attr-for-selected="wmctrl">
+              <paper-tabs id="windows" scrollable hide-scroll-buttons attr-for-selected="wmctrl" on-iron-activate="_onActivateWindowFocus">
                 <template is="dom-repeat" items="{{windows}}" as="window">
-                  <paper-tab wmctrl="{{window.id}}" on-tap="_setWindowFocus">
+                  <paper-tab wmctrl="{{window.id}}">
                     {{window.title}}
                     <!--<paper-icon-button icon="app-icons:close" wmctrl="{{window.id}}" on-tap="_closeWindow" ></paper-icon-button>-->
                   </paper-tab>
@@ -151,10 +151,9 @@
         }
       },
 
-      _setWindowFocus: function(event) {
-        if (event.target.localName == 'paper-tab') {
-          this.socketEmit('tuxRemote/osController/setFocus', event.target.wmctrl);
-        }
+      _onActivateWindowFocus: function(event, detail) {
+        event.preventDefault();
+        this.socketEmit('tuxRemote/osController/setFocus', detail.item.wmctrl);
       },
 
       // _closeWindow: function(event) {

@@ -8,7 +8,6 @@
 <link rel="import" href="../app-theme.html">
 <link rel="import" href="../app-icons.html">
 <link rel="import" href="app-item.html">
-<link rel="import" href="custom-list.html">
 
 <link rel="import" href="../behaviors/socket-behavior.html">
 <link rel="import" href="../services/os-controller.html">
@@ -35,11 +34,11 @@
           </div>
         </app-toolbar>
       </app-header>
-      <custom-list id="list" attr-for-selected="name" on-select="_onSelect">
+      <paper-listbox id="list" attr-for-selected="name" on-iron-activate="_onSelect">
         <template is="dom-repeat" items="{{applications}}" as="application">
           <app-item name="{{application.id}}" application="{{application}}"></app-item>
         </template>
-      </custom-list>
+      </paper-listbox>
     </app-header-layout>
   </template>
   <script>
@@ -84,13 +83,14 @@
 
       _onFocusChanged: function(event, app) {
         // the focus is sent by the server, by-pass the user-select behavior.
-        this.$.list.select(app.id, true);
+        this.$.list.select(app.id);
       },
 
-      _onSelect: function(event, node) {
+      _onSelect: function(event, detail) {
         // prevent set aria-selected to true.
         event.preventDefault();
-        this.socketEmit('tuxRemote/osController/setFocus', node.application.focusId);
+        var app = detail.item.application;
+        this.socketEmit('tuxRemote/osController/setFocus', app.focusId);
       },
 
     });
