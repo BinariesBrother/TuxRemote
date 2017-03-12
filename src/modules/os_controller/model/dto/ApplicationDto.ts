@@ -101,7 +101,7 @@ export class ApplicationDto {
 
   public static mergeApplciations(origine: {[id:string]:ApplicationDto}, compare: {[id:string]:ApplicationDto})
     :{[id:string]: {[id:string]: WindowDto[]}}{
-    let result :any = {};
+    let result :{[id:string]: {[id:string]: WindowDto[]}} = {};
     Object.keys(compare).forEach(applicationId=>{
       if(origine[applicationId] && compare[applicationId]){
         let temp = origine[applicationId].merge(compare[applicationId]);
