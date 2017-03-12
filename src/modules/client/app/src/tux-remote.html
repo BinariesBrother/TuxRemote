@@ -14,6 +14,7 @@
 <link rel="import" href="app-theme.html">
 <link rel="import" href="app-icons.html">
 <link rel="import" href="elements/running-app-list.html">
+<link rel="import" href="elements/default-view.html">
 
 <link rel="import" href="services/os-controller.html">
 
@@ -22,10 +23,6 @@
     <style include="app-theme iron-flex iron-flex-alignment">
       :host {
         display: block;
-      }
-
-      .content {
-        height: 300vh;
       }
 
       [custom-spacer] {
@@ -54,7 +51,7 @@
         <running-app-list></running-app-list>
       </app-drawer>
 
-      <app-header-layout>
+      <app-header-layout has-scrolling-region>
         <app-header condenses fixed>
           <app-toolbar>
             <paper-icon-button icon="app-icons:menu" drawer-toggle></paper-icon-button>
@@ -79,7 +76,9 @@
           </div>
           <paper-ripple id="toolbarRipple" noink></paper-ripple>
         </app-header>
-        <div class="content"></div>
+        <div class="content">
+          <default-view application="{{current}}"></default-view>
+        </div>
         <paper-toast id="paperToastReconnect" duration="0" horizontal-align="right">
           <div id="paperToastContent" class="layout horizontal center-center">
             <div>The server does not seem to respond. Attempting reconnection in progress.</div>
