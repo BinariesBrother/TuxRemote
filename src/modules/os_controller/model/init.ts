@@ -18,9 +18,9 @@ export function getJson(){
                   "shell":"xdotool key ctrl+shift+Tab"
               }
             },
-            {
-              "name":"Navigator.set_url"
-            }
+            // {
+            //   "name":"Navigator.set_url"
+            // }
         ]
       },
       {
@@ -53,19 +53,19 @@ export function getJson(){
     {
         "id":"NAVIGATOR.FIREFOX",
         "name":"Firefox",
-        "view":"NAVIGATOR",
+        "view":"Navigator",
         "commands":[]
     },
     {
         "id":"DESKTOP_WINDOW.NAUTILUS",
         "name":"Bureau",
-        "view":"DEFAULT",
+        "view":"Default",
         "commands":[]
     },
     {
         "id":"VLC.VLC",
         "name":"Vlc",
-        "view":"PLAYER",
+        "view":"Player",
         "commands":[]
     },
     {
@@ -75,9 +75,21 @@ export function getJson(){
         "commands":[]
     },
     {
+        "id":"TERMINATOR.TERMINATOR",
+        "name":"Terminator",
+        "view":"Default",
+        "commands":[]
+    },
+    {
         "id":"CHROMIUM-BROWSER.CHROMIUM-BROWSER",
         "name":"Chromium",
-        "view":"NAVIGATOR",
+        "view":"Navigator",
+        "commands":[]
+    },
+    {
+        "id":"GOOGLE-CHROME.GOOGLE-CHROME",
+        "name":"Chrome",
+        "view":"Navigator",
         "commands":[]
     },
     {
