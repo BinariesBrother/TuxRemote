@@ -113,7 +113,7 @@ export class LinuxDriver implements OsDriver {
     let newRun: {[id:string]:ApplicationDto} ;
 
     if(stdout===""){
-      newRun= this.oldRun;
+      newRun= {};
     }else{
       newRun= this.readApplication(stdout);
     }
