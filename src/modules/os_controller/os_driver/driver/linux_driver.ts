@@ -52,7 +52,7 @@ export class LinuxDriver implements OsDriver {
   }
 
   public getFocus(): ApplicationDto {
-    return this.focus;
+    return this.focus?this.focus:this.createGost();
   }
 
   public getSound(): any {
