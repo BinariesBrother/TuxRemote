@@ -75,7 +75,9 @@
         if (this.application) {
           if (this.application.view && this.application.view.commandesTypes) {
             for (var id in this.application.view.commandesTypes) {
-              this.push('commands', this.application.view.commandesTypes[id].command);
+              if (this.application.view.commandesTypes[id].command) {
+                this.push('commands', this.application.view.commandesTypes[id].command);
+              }
             }
           }
           if (this.application.commands) {
