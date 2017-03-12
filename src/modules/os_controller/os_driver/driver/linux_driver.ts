@@ -202,7 +202,7 @@ export class LinuxDriver implements OsDriver {
     let focus;
     let focusId;
     
-    if (stdout==="") {
+    if (stdout!=="") {
       let parameters = stdout.split('\n')[0].split(' ');
       if (parameters.length<2) { return; }
       focus = this.oldRun[parameters[1].toUpperCase()];
