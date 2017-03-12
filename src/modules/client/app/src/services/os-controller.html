@@ -61,6 +61,7 @@ TuxRemote.osController = {
     _onSetRunList: function(list) {
       TuxRemote.osController.runningApps = list;
       this.fire_('set-run-list', this.runningApps);
+      this._fixFocusId();
       this.socketEmit('tuxRemote/osController/getFocus');
     },
 
@@ -69,6 +70,7 @@ TuxRemote.osController = {
         var app = applications[i];
         this.runningApps[app.id] = app;
       }
+      this._fixFocusId();
       this.fire_('apps-opened', applications);
     },
 
@@ -102,6 +104,7 @@ TuxRemote.osController = {
 
     _onFocusChanged: function(app) {
       this.runningApps[app.id].focusId = app.window;
+      this._fixFocusId();
       this.fire_('focus-changed', app);
     },
 
