@@ -3,10 +3,11 @@ import { OsInterface } from './os_driver/interface/os_interface';
 import { MousePosition } from './os_driver/mouse_position';
 import { osFactory } from './os_factory';
 import {exec} from 'child_process';
-import {init} from './model/model'
+import {init as initModel}  from './model/model'
 import {Application} from './model/entities/Application';
 import {ApplicationDto} from './model/dto/ApplicationDto';
 import {ApplicationRepository} from './model/repository/ApplicationRepository';
+import {Administration} from "./administration/administration";
 
 import {invoke, defineHook, defineHooks, hook} from "../hooks/hooks";
 
@@ -20,7 +21,7 @@ export class OsController implements OsInterface{
   oldFocus: any[];
   interval: Number;
   osDriver: OsDriver;
-  static osController: OsController
+  static instance: OsController
   events: string[];
 
   private constructor(){
@@ -38,17 +39,19 @@ export class OsController implements OsInterface{
       "tuxRemote/osController/open",
       "tuxRemote/osController/moveMouse"
     ]);
+
+    Administration.getInstance();
   }
 
   public static getInstance(){
-    if(!this.osController){
-      this.osController = new OsController();
+    if(!this.instance){
+      this.instance = new OsController();
     }
-    return this.osController;
+    return this.instance;
   }
 
   private initbd(): Promise<any>{
-    return init();
+    return initModel();
   }
 
   /**
@@ -182,4 +185,6 @@ export class OsController implements OsInterface{
 
 }
 
-OsController.getInstance();
+export function init(){
+  OsController.getInstance();
+}

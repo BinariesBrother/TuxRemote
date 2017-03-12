@@ -1,9 +1,9 @@
 import {hook, defineHook, invoke} from "../hooks/hooks";
+import {Menu} from "./menu/Menu"
 
 import * as logger from "node-yolog";
 
-defineHook("tuxRemote/client/registerMenu");
-defineHook("tuxRemote/client/registerStatic");
+defineHook("tuxRemote/admin/registerMenu");
 
 export class Admin{
 
@@ -11,9 +11,11 @@ export class Admin{
 
   public events: string[];
 
+  private lock = {}
+
   private constructor() {
     this.events = [
-      defineHook("tuxRemote/client/getAdminMenu"),
+      defineHook("tuxRemote/admin/getAdminMenu"),
     ];
   }
 
@@ -24,29 +26,20 @@ export class Admin{
     return this.instance;
   }
 
-  @hook("tuxRemote/socket/eventListener", () => this.getInstance())
+  @hook("tuxRemote/socket/eventListener", () => Admin.getInstance())
   onEventListener() {
     return this.events;
   }
 
-  @hook("tuxRemote/client/getAdminMenu")
+  @hook("tuxRemote/admin/getAdminMenu", () => Admin.getInstance())
   onAdminMenuRegister(socket, args) {
-    let menu_items = invoke("tuxRemote/client/registerMenu");
-    logger.trace(menu_items);
-    socket.emit("tuxRemote/client/setAdminMenu", menu_items);
+    let menu_items : Menu[]= invoke("tuxRemote/admin/registerMenu");
+    //socket.emit("tuxRemote/admin/setAdminMenu", menu_items);
   }
 
-  @hook("tuxRemote/client/registerMenu")
-  onRegisterMenu() {
-    return [{
-      label: "Test Register Menu",
-      menu_entries: [
-        {
-          label: "Entry 1",
-          icon: "<ICON_PATH>",
-          view: "<POLYMER_COMPONENT_NAME>",
-        }
-      ]
-    }];
-  }
+}
+
+export function init(){
+  logger.trace(invoke("tuxRemote/admin/registerMenu"));
+  
 }

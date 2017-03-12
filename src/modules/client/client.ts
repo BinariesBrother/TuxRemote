@@ -4,6 +4,8 @@ import * as logger from "node-yolog";
 import {hook, defineHook, invoke} from "../hooks/hooks";
 import {app} from "../server/server";
 
+defineHook("tuxRemote/client/registerStatic");
+
 /**
  * Provide hooks to allow other modules to include your own admin menu and Polymer component view.
  *
