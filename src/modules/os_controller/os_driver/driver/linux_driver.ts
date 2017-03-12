@@ -97,8 +97,6 @@ export class LinuxDriver implements OsDriver {
         result[app.id].addWindow(app);
       }
     }
-    let gost = this.createGost();
-    result[gost.id] = gost;
     return result;
   }
 
@@ -112,8 +110,17 @@ export class LinuxDriver implements OsDriver {
   }
 
   private async run(error, stdout, stderr) {
-    if (stdout==="") { return; }
-    let newRun: {[id:string]:ApplicationDto} = this.readApplication(stdout);
+    let newRun: {[id:string]:ApplicationDto} ;
+
+    if(stdout===""){
+      newRun= this.oldRun;
+    }else{
+      newRun= this.readApplication(stdout);
+    }
+    
+    newRun["GOST.GOST"] = this.createGost();
+
+    
     let diff = ApplicationDto.mergeApplciations(this.oldRun, newRun);
 
     let openedApplications : ApplicationDto[] = Object.keys(newRun).map(id=>{
