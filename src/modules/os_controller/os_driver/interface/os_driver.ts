@@ -8,7 +8,7 @@ export interface OsDriver{
 
   setFather( osControler: OsInterface );
 
-  exec(cmd);
+  exec(cmd: number);
 
   getRunList(): {[id:string]:ApplicationDto};
 

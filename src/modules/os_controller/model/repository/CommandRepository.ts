@@ -21,6 +21,13 @@ export class CommandRepository {
       .where("application.id LIKE :applicationId", { applicationId: applicationId })
       .getMany();
   }
+  
+  public static async findOne(transaction: EntityManager, commandId: number): Promise<Command> {
+    return transaction.getRepository(Command)
+      .createQueryBuilder("command")
+      .where("command.id = :commandId", { commandId: commandId })
+      .getOne();
+  }
 
   /**
   * récupère la commande de nom commandName liée à l'application applicationId

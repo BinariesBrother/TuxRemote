@@ -9,6 +9,7 @@ import { CommandDto } from './../../model/dto/CommandDto';
 import { ApplicationDto } from './../../model/dto/ApplicationDto';
 import * as connectionManager from "../../model/repository/Connection";
 import * as logger from 'node-yolog';
+import {CommandRepository} from "../../model/repository/CommandRepository"
 
 export class LinuxDriver implements OsDriver {
   father: OsInterface;
@@ -27,8 +28,23 @@ export class LinuxDriver implements OsDriver {
     this.father = OsInterface;
   }
 
-  public exec(cmd: CommandDto) {
-    exec(cmd.shell);
+  private consoleError(error, stdout, stderr){
+    this.init();
+
+    if(error){
+      logger.error(error, stderr);
+    }
+  }
+
+  public async exec(cmd: number) {
+    let connectionMere = await connectionManager.session();
+    connectionMere.entityManager.transaction(transaction=>{
+      CommandRepository.findOne(transaction, cmd).then( command=>{
+        if(command){
+          exec(command.shell, this.consoleError.bind(this));
+        }
+      });
+    });
   }
 
   public getRunList(): {[id:string]:ApplicationDto} {
@@ -81,7 +97,18 @@ export class LinuxDriver implements OsDriver {
         result[app.id].addWindow(app);
       }
     }
+    let gost = this.createGost();
+    result[gost.id] = gost;
     return result;
+  }
+
+  private createGost(): ApplicationDto{
+      let gost :ApplicationDto = new ApplicationDto();
+      gost.addWindow({"title":"Empty run list", "id":"Desktop"})
+      gost.focusId = "Desktop"; 
+      gost.name = "Empty list";
+      gost.id="GOST.GOST"
+      return gost;
   }
 
   private async run(error, stdout, stderr) {
@@ -172,15 +199,27 @@ export class LinuxDriver implements OsDriver {
   }
 
   public focusHandler(error, stdout, stderr){
-    if (stdout==="") { return; }
-    let parameters = stdout.split('\n')[0].split(' ');
-    if (parameters.length<2) { return; }
-    let focus = this.oldRun[parameters[1].toUpperCase()];
-    let focusId = parameters[0];
+    let focus;
+    let focusId;
+    
+    if (stdout==="") {
+      let parameters = stdout.split('\n')[0].split(' ');
+      if (parameters.length<2) { return; }
+      focus = this.oldRun[parameters[1].toUpperCase()];
+      focusId = parameters[0];
+    }
+    
+    if(!focus || !focusId) {
+      focus = this.createGost();
+      focusId = focus.windows[Object.keys(focus.windows)[0]].id;
+    }
+
     if(focus && focus.windows[focusId] && (!this.focus || (focus.id != this.focus.id || focusId != this.focus.focusId))){
       this.focus = focus;
       this.focus.focusId = focusId;
-      this.father.onFocusChange(this.focus);
+      if(this.focus){
+        this.father.onFocusChange(this.focus);
+      }
     }
 
   }
