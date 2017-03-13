@@ -36,7 +36,7 @@
 
     </style>
 
-    <paper-listbox id="commands" on-iron-select="_sendCommand">
+    <paper-listbox id="commands" on-iron-activate="_sendCommand">
       <template is="dom-repeat" items={{commands}} as="command">
         <paper-item name="{{command.name}}" command="{{command}}">
           {{command.name}}
@@ -90,7 +90,10 @@
       },
 
       _sendCommand: function(event, detail) {
-        this.socketEmit('tuxRemote/osController/exec', detail.item.command.id);
+        event.preventDefault();
+        this.debounce('iron-activate', function() {
+          this.socketEmit('tuxRemote/osController/exec', detail.item.command.id);
+        }, 250);
       },
 
     });
