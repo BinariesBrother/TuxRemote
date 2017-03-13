@@ -36,7 +36,7 @@
       </app-header>
       <paper-listbox id="list" attr-for-selected="name" on-iron-activate="_onSelect">
         <template is="dom-repeat" items="{{applications}}" as="application">
-          <app-item name="{{application.id}}" application="{{application}}"></app-item>
+          <app-item name="{{application.id}}" application="{{application}}" hidden$="{{_hiddenApp(application)}}"></app-item>
         </template>
       </paper-listbox>
     </app-header-layout>
@@ -92,6 +92,10 @@
         event.preventDefault();
         var app = detail.item.application;
         this.socketEmit('tuxRemote/osController/setFocus', app.focusId);
+      },
+
+      _hiddenApp: function(app) {
+        return this.applications.length > 1 && app.id == 'GOST.GOST';
       },
 
     });
