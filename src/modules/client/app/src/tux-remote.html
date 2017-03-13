@@ -14,9 +14,10 @@
 <link rel="import" href="app-theme.html">
 <link rel="import" href="app-icons.html">
 <link rel="import" href="elements/running-app-list.html">
-<link rel="import" href="elements/default-view.html">
 
 <link rel="import" href="services/os-controller.html">
+
+<link rel="import" href="views/default-view.html">
 
 <dom-module id="tux-remote">
   <template>
@@ -76,9 +77,7 @@
           </div>
           <paper-ripple id="toolbarRipple" noink></paper-ripple>
         </app-header>
-        <div class="content">
-          <default-view application="{{current}}"></default-view>
-        </div>
+        <div id="viewWrapper" class="content"></div>
         <paper-toast id="paperToastReconnect" duration="0" horizontal-align="right">
           <div id="paperToastContent" class="layout horizontal center-center">
             <div>The server does not seem to respond. Attempting reconnection in progress.</div>
@@ -174,6 +173,40 @@
           this.async(function() {
             this.$.toolbarRipple.upAction();
           }, 500);
+        }
+
+        // Handle view
+        if (this.current.view) {
+          var view = this.current.view.name.toLowerCase();
+          var tag = view + '-view';
+          var url = this.resolveUrl('views/' + tag + '.html');
+          this.importHref(url, this._useView, this._useDefaultView, true);
+        }
+      },
+
+      _useView: function() {
+        this.removeCurrentView();
+        if (this.current.view && this.current.view.name) {
+          var view = this.current.view.name.toLowerCase();
+          var tag = view + '-view';
+          this._appendView(tag);
+        }
+      },
+
+      _useDefaultView: function() {
+        this.removeCurrentView();
+        this._appendView('default-view');
+      },
+
+      _appendView: function(tag) {
+        this._view = this.create(tag, {application: this.current});
+        this.$.viewWrapper.appendChild(this._view);
+      },
+
+      removeCurrentView: function() {
+        if (this._view) {
+          this.$.viewWrapper.removeChild(this._view);
+          delete this._view;
         }
       },
 
