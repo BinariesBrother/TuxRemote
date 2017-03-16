@@ -11,13 +11,13 @@
 <link rel="import" href="/bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner-lite.html">
 
-<link rel="import" href="app-theme.html">
-<link rel="import" href="app-icons.html">
-<link rel="import" href="elements/running-app-list.html">
+<link rel="import" href="/core/app-theme.html">
+<link rel="import" href="/core/app-icons.html">
+<link rel="import" href="/core/elements/running-app-list.html">
 
-<link rel="import" href="services/os-controller.html">
+<link rel="import" href="/core/services/os-controller.html">
 
-<link rel="import" href="views/default-view.html">
+<link rel="import" href="/core/views/default-view.html">
 
 <dom-module id="tux-remote">
   <template>
@@ -69,7 +69,6 @@
                 <template is="dom-repeat" items="{{windows}}" as="window">
                   <paper-tab wmctrl="{{window.id}}">
                     {{window.title}}
-                    <!--<paper-icon-button icon="app-icons:close" wmctrl="{{window.id}}" on-tap="_closeWindow" ></paper-icon-button>-->
                   </paper-tab>
                 </template>
               </paper-tabs>
@@ -182,6 +181,10 @@
           var url = this.resolveUrl('views/' + tag + '.html');
           this.importHref(url, this._useView, this._useDefaultView, true);
         }
+        else {
+          this.removeCurrentView();
+          this._appendView('default-view');
+        }
       },
 
       _useView: function() {
@@ -201,11 +204,13 @@
       _appendView: function(tag) {
         this._view = this.create(tag, {application: this.current});
         this.$.viewWrapper.appendChild(this._view);
+        Polymer.dom.flush();
       },
 
       removeCurrentView: function() {
         if (this._view) {
           this.$.viewWrapper.removeChild(this._view);
+          Polymer.dom.flush();
           delete this._view;
         }
       },

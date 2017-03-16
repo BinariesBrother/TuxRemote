@@ -22,17 +22,17 @@ class ClientSocketApi {
 
   private static instance: ClientSocketApi;
   public events: string[];
-  public staticDirs: string[];
+  public staticDirs: { [virtual:string]: string };
 
   private constructor() {
     this.events = [
       defineHook("tuxRemote/client/getAdminMenu"),
     ];
 
-    this.staticDirs = [
-      require.main.exports.appDirectory + "/static/", // Global static folder.
-      __dirname + "/app/",
-    ];
+    this.staticDirs = {
+      '/bower_components': require.main.exports.appDirectory + "/static/bower_components/",
+      '/core': __dirname + "/app/src/",
+    };
 
   }
 
@@ -50,7 +50,7 @@ class ClientSocketApi {
 
   @hook("tuxRemote/client/registerStatic", () => ClientSocketApi.getInstance())
   onRegisterStatic() {
-    return this.staticDirs;
+    return [this.staticDirs];
   }
 
   @hook("tuxRemote/client/getAdminMenu")
@@ -80,7 +80,13 @@ export function init() {
   logger.debug("Static folders are:");
   let static_dirs = invoke("tuxRemote/client/registerStatic");
   for (let i in static_dirs) {
-    app.use(express.static(static_dirs[i]));
-    logger.debug(static_dirs[i]);
+    for (var key in static_dirs[i]) {
+      app.use(key, express.static(static_dirs[i][key]));
+      logger.debug(key, static_dirs[i][key]);
+    }
   }
+
+  app.get('/', function(req, res) {
+    res.sendFile(__dirname + "/app/index.html");
+  });
 }
