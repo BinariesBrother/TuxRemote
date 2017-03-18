@@ -9,7 +9,7 @@ import {EntityManager} from "typeorm";
 export class ViewRepository {
 
 
-  public static async findAll(transaction: EntityManager): Promise<View[]> { 
+  public static async findAll(transaction: EntityManager): Promise<View[]> {
     return transaction.getRepository(View)
       .find();
   }
@@ -43,6 +43,7 @@ export class ViewRepository {
     views.forEach(viewDto =>{
       let view = new View();
       view.name = viewDto.name;
+      view.module = viewDto.module;
       promiseAll.push(ViewRepository.save(transaction, view).then(result =>{
         let promiseAll2 : Promise<Object>[] = [];
         viewDto.commandTypes.forEach(commandType => {

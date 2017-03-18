@@ -8,12 +8,16 @@ export class ViewDto {
   @JsonProperty("name")
   name: string;
 
+  @JsonProperty("module")
+  module: string;
+
 
   @JsonProperty({clazz: CommandTypeDto, name:"commandesTypes"})
   commandesTypes: {[id:string]:CommandTypeDto} = {};
 
   public constructor(){
     this.name = void 0;
+    this.module = 'core';
     this.commandesTypes = {};
   }
 
@@ -23,9 +27,12 @@ export class ViewDto {
       }
       let result : ViewDto = new ViewDto;
       result.name = view.name;
+      if (view.module) {
+        result.module = view.module;
+      }
       if(view.viewCommandTypes){
-              view.viewCommandTypes.forEach(viewCommandType=>
-                result.commandesTypes[viewCommandType.id] = CommandTypeDto.fromViewCommandType(viewCommandType)
+        view.viewCommandTypes.forEach(viewCommandType =>
+          result.commandesTypes[viewCommandType.id] = CommandTypeDto.fromViewCommandType(viewCommandType)
         );
       }
       return result;
