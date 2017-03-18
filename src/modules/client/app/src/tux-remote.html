@@ -177,8 +177,10 @@
         // Handle view
         if (this.current.view) {
           var view = this.current.view.name.toLowerCase();
+          var basePath = this.current.view.module;
           var tag = view + '-view';
-          var url = this.resolveUrl('views/' + tag + '.html');
+          var path = '/' + basePath + '/views/' + tag + '.html';
+          var url = this.resolveUrl(path);
           this.importHref(url, this._useView, this._useDefaultView, true);
         }
         else {

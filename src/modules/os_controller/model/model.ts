@@ -38,6 +38,9 @@ function initDb(connection, init){
 function initViews(connection, view):Promise<any>{
   let nview:View = new View();
   nview.name = view.name;
+  if (view.module) {
+    nview.module = view.module;
+  }
   return ViewRepository.save(connection, nview).then(result=>{
     let viewPromises: Promise<any>[] = [];
     view.commandesTypes.forEach(ct=>
