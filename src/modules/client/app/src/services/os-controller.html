@@ -45,9 +45,7 @@ TuxRemote.osController = {
         this.socketListen('tuxRemote/osController/windowsChanged', this._onWindowsChanged.bind(this));
         this.socketListen('tuxRemote/osController/applicationsClosed', this._onAppClosed.bind(this));
         this.socketListen('tuxRemote/osController/focusChange', this._onFocusChanged.bind(this));
-        this.socketListen('tuxRemote/osController/soundChange', function() {
-          console.log('soundChange', arguments);
-        });
+        this.socketListen('tuxRemote/osController/soundChange', this._onVolumeChanged.bind(this));
         this.socketEmit('tuxRemote/osController/getRunList');
 
         // Handle client reconnection.
@@ -117,6 +115,10 @@ TuxRemote.osController = {
           }
         }
       }
+    },
+
+    _onVolumeChanged: function(level) {
+      this.fire_('volume-changed', level);
     },
 
   });

@@ -1,0 +1,28 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+
+<link rel="import" href="/core/app-theme.html">
+<link rel="import" href="/core/app-icons.html">
+
+<dom-module id="app-dialog">
+  <template>
+    <style include="app-theme">
+      :host {
+        display: block;
+        background-color: #fff;
+      }
+    </style>
+
+    <content></content>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'app-dialog',
+
+      behaviors: [
+        Polymer.PaperDialogBehavior
+      ],
+    });
+  </script>
+</dom-module>

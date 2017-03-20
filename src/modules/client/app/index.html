@@ -84,6 +84,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           onload();
         }
+
+        var keyframeEffectSupported = (
+          'KeyframeEffect' in document
+          && 'import' in document.createElement('link')
+        );
+        if (!keyframeEffectSupported) {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = '/bower_components/web-animations-js/web-animations-next.min.js';
+          document.head.appendChild(script);
+        }
       })();
 
       // Load pre-caching Service Worker

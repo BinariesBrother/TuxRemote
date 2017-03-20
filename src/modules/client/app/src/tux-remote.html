@@ -10,10 +10,16 @@
 <link rel="import" href="/bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="/bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="/bower_components/paper-fab/paper-fab.html">
+<!--<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">-->
+<link rel="import" href="/bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="/bower_components/binbro-edge-menu/binbro-edge-menu.html">
 
 <link rel="import" href="/core/app-theme.html">
 <link rel="import" href="/core/app-icons.html">
+
 <link rel="import" href="/core/elements/running-app-list.html">
+<link rel="import" href="/core/elements/volume-dialog.html">
 
 <link rel="import" href="/core/services/os-controller.html">
 
@@ -42,6 +48,27 @@
         --paper-spinner-color: var(--paper-orange-700);
       }
 
+      binbro-edge-menu {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+
+        --edge-menu-toggle: {
+          position: absolute;
+        }
+        --edge-menu-item: {
+          position: absolute;
+        }
+      }
+
+      #soundDialog {
+        max-width: 400px;
+      }
+
+      #paperSoundSlider {
+        width: 100%;
+      }
+
     </style>
 
     <os-controller id="osController"></os-controller>
@@ -57,6 +84,7 @@
           <app-toolbar>
             <paper-icon-button icon="app-icons:menu" drawer-toggle></paper-icon-button>
             <div main-title>TuxRemote</div>
+            <paper-icon-button icon="app-icons:volume" on-tap="opendVolumeDialog"></paper-icon-button>
           </app-toolbar>
           <div sticky>
             <app-toolbar>
@@ -85,7 +113,19 @@
             </div>
           </div>
         </paper-toast>
+        <binbro-edge-menu edge="bottom" radius="65">
+          <paper-fab edge-menu-toggle icon="app-icons:apps"></paper-fab>
+          <div edge-menu-items>
+            <paper-fab icon="app-icons:volume" order="1" on-click="opendVolumeDialog"></paper-fab>
+            <paper-fab icon="app-icons:close" order="2"></paper-fab>
+            <paper-fab icon="app-icons:menu" order="3"></paper-fab>
+          </div>
+        </binbro-edge-menu>
+
       </app-header-layout>
+
+      <volume-dialog opened="{{volumeDialogOpened}}"></volume-dialog>
+
     </app-drawer-layout>
 
   </template>
@@ -110,6 +150,11 @@
           type: Object,
           value: {},
           observer: '_onCurrentChanged',
+        },
+
+        volumeDialogOpened: {
+          type: Boolean,
+          value: false,
         },
       },
 
@@ -240,6 +285,10 @@
       _computeName: function(application) {
         return application.name || application.id;
       },
+
+      opendVolumeDialog: function() {
+        this.set('volumeDialogOpened', true);
+      }
     });
   </script>
 </dom-module>
