@@ -189,22 +189,20 @@
 
       _onCurrentChanged: function() {
         // Close the drawer
-        if (this.$.drawerLayout.narrow) {
-          this.$.drawer.close();
-        }
+        // if (this.$.drawerLayout.narrow) {
+        //   this.$.drawer.close();
+        // }
         // Animate the app-header ripple
-        if (this.$.appToolbarImage) {
-          var rect = this.$.appToolbarImage.getBoundingClientRect();
-          this.$.toolbarRipple.downAction({
-            detail: {
-              x: rect.left + (rect.width / 2),
-              y: rect.top + (rect.height / 2)
-            }
-          });
-          this.async(function() {
-            this.$.toolbarRipple.upAction();
-          }, 500);
-        }
+        var rect = this.$$('app-toolbar [main-title]').getBoundingClientRect();
+        this.$.toolbarRipple.downAction({
+          detail: {
+            x: rect.left,
+            y: rect.top + (rect.height / 2)
+          }
+        });
+        this.debounce('toolbar-ripple', function() {
+          this.$.toolbarRipple.upAction();
+        }.bind(this), 500);
 
         // Handle view
         if (this.current.view) {
