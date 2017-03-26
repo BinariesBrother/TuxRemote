@@ -50,6 +50,7 @@ TuxRemote.osController = {
 
         // Handle client reconnection.
         this.socketListen('reconnect', function() {
+          this.fire_('reconnect');
           this.socketEmit('tuxRemote/osController/getRunList');
         }.bind(this));
         TuxRemote.osController.firstTime = false;

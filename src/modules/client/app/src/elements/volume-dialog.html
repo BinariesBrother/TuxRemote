@@ -57,12 +57,17 @@
       },
 
       listeners: {
+        'osController.reconnect': '_onReconnect',
         'osController.volume-changed': '_onVolumeChangedFromRemote',
         'mainSlider.immediate-value-change': '_onMainSliderChange',
         'touchSlider.immediate-value-change': '_onTouchSliderChange',
       },
 
       attached: function() {
+        this.socketEmit('tuxRemote/osController/getSound');
+      },
+
+      _onReconnect: function() {
         this.socketEmit('tuxRemote/osController/getSound');
       },
 
