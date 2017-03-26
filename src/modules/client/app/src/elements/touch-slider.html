@@ -78,7 +78,7 @@
         <div id="block2"></div>
       </div>
 
-      <div id="value" hidden$="{{!pin}}">{{value}}</div>
+      <div id="value" hidden$="{{!pin}}">{{immediateValue}}</div>
 
     </div>
 
@@ -93,6 +93,12 @@
           value: 0,
           notify: true,
           observer: '_onValueChanged'
+        },
+
+        immediateValue: {
+          type: Number,
+          value: 0,
+          observer: '_onImmediateValueChanged'
         },
 
         pin: {
@@ -113,6 +119,14 @@
 
       listeners: {
         'wrapper.track': '_onTrack',
+        'wrapper.tap': '_onTap',
+      },
+
+      _onTap: function(e) {
+        var rect = this.$.wrapper.getBoundingClientRect();
+        this._rect = rect;
+        var value = this._computeValue(e.detail);
+        this.set('value', value);
       },
 
       _onTrack: function(e) {
@@ -124,11 +138,13 @@
             this._rect = rect;
             break;
           case 'track':
-            this._computeValue(e.detail);
+            this.set('immediateValue', this._computeValue(e.detail));
             break;
           case 'end':
             this.toggleClass('animate', true, this.$.slide1);
             this.toggleClass('animate', true, this.$.slide2);
+            var value = this._computeValue(e.detail);
+            this.set('value', value);
             break;
         }
       },
@@ -137,13 +153,22 @@
         var percentage = ((detail.y - this._rect.top) * 100) / this._rect.height;
         percentage = Math.round(percentage);
         percentage = Math.max(0, Math.min(100, percentage));
-        var value = 100 - percentage;
-        this.set('value', value);
+        return 100 - percentage;
       },
 
       _onValueChanged: function() {
-        this.$.slide1.style.height = this.value + '%';
-        this.$.slide2.style.height = this.value + '%';
+        this._updateStyle(this.value);
+        this.set('immediateValue', this.value);
+      },
+
+      _onImmediateValueChanged: function() {
+        this._updateStyle(this.immediateValue);
+        this.fire('immediate-value-change', this.immediateValue);
+      },
+
+      _updateStyle(value) {
+        this.$.slide1.style.height = value + '%';
+        this.$.slide2.style.height = value + '%';
       },
 
     });

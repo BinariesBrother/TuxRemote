@@ -28,7 +28,7 @@
         <paper-slider id="mainSlider" value="{{volume}}" pin></paper-slider>
         <!--<paper-icon-button icon="app-icons:volume-off" on-tap="mute"></paper-icon-button>-->
       </app-toolbar>
-      <touch-slider value="{{volume}}" pin></touch-slider>
+      <touch-slider id="touchSlider" value="{{volume}}" pin></touch-slider>
     </app-dialog>
   </template>
   <script>
@@ -58,6 +58,8 @@
 
       listeners: {
         'osController.volume-changed': '_onVolumeChangedFromRemote',
+        'mainSlider.immediate-value-change': '_onMainSliderChange',
+        'touchSlider.immediate-value-change': '_onTouchSliderChange',
       },
 
       attached: function() {
@@ -73,6 +75,20 @@
         if (this._allowSetSound) {
           this.socketEmit('tuxRemote/osController/setSound', this.volume);
         }
+      },
+
+      _onMainSliderChange: function() {
+        this._updateVolume(this.$.mainSlider.immediateValue);
+      },
+
+      _onTouchSliderChange: function() {
+        this._updateVolume(this.$.touchSlider.immediateValue);
+      },
+
+      _updateVolume: function(value) {
+        this.debounce('volume-change', function() {
+          this.set('volume', value);
+        }.bind(this), 200);
       },
 
       mute: function() {
