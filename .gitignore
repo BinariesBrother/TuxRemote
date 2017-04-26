@@ -75,3 +75,7 @@ bower_components/
 ### Project specifics ###
 src/**/*.js
 !src/modules/client/app/
+
+
+### IntelliJ
+.idea
