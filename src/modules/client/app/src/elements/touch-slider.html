@@ -1,11 +1,10 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
 <link rel="import" href="/core/app-theme.html">
-<link rel="import" href="/core/app-icons.html">
 
 <dom-module id="touch-slider">
   <template>
-    <style>
+    <style include="app-theme">
       :host {
         display: block;
       }
@@ -78,7 +77,7 @@
         <div id="block2"></div>
       </div>
 
-      <div id="value" hidden$="{{!pin}}">{{immediateValue}}</div>
+      <div id="value" hidden$="{{!pin}}">{{_displayValue(immediateValue, value)}}</div>
 
     </div>
 
@@ -91,7 +90,6 @@
         value: {
           type: Number,
           value: 0,
-          notify: true,
           observer: '_onValueChanged'
         },
 
@@ -103,28 +101,29 @@
 
         pin: {
           type: Boolean,
-          value: false,
+          value: false
         },
 
         min: {
           type: Number,
-          value: 0,
+          value: 0
         },
 
         max: {
           type: Number,
-          value: 100,
-        },
+          value: 100
+        }
       },
+
+      _onUserTrack: false,
 
       listeners: {
         'wrapper.track': '_onTrack',
-        'wrapper.tap': '_onTap',
+        'wrapper.tap': '_onTap'
       },
 
       _onTap: function(e) {
-        var rect = this.$.wrapper.getBoundingClientRect();
-        this._rect = rect;
+        this._rect = this.$.wrapper.getBoundingClientRect();
         var value = this._computeValue(e.detail);
         this.set('value', value);
       },
@@ -134,8 +133,8 @@
           case 'start':
             this.toggleClass('animate', false, this.$.slide1);
             this.toggleClass('animate', false, this.$.slide2);
-            var rect = this.$.wrapper.getBoundingClientRect();
-            this._rect = rect;
+            this._rect = this.$.wrapper.getBoundingClientRect();
+            this._onUserTrack = true;
             break;
           case 'track':
             this.set('immediateValue', this._computeValue(e.detail));
@@ -143,8 +142,8 @@
           case 'end':
             this.toggleClass('animate', true, this.$.slide1);
             this.toggleClass('animate', true, this.$.slide2);
-            var value = this._computeValue(e.detail);
-            this.set('value', value);
+            this._onUserTrack = false;
+            this.set('value', this._computeValue(e.detail));
             break;
         }
       },
@@ -156,20 +155,28 @@
         return 100 - percentage;
       },
 
-      _onValueChanged: function() {
-        this._updateStyle(this.value);
-        this.set('immediateValue', this.value);
+      _onValueChanged: function(newValue, oldValue) {
+        if (oldValue !== undefined) {
+          this._updateStyle(this.value);
+          this.fire('value-change', this.value);
+        }
       },
 
-      _onImmediateValueChanged: function() {
-        this._updateStyle(this.immediateValue);
-        this.fire('immediate-value-change', this.immediateValue);
+      _onImmediateValueChanged: function(newValue, oldValue) {
+        if (oldValue !== undefined) {
+          this._updateStyle(newValue);
+          this.fire('immediate-value-change', newValue);
+        }
       },
 
-      _updateStyle(value) {
+      _updateStyle: function(value) {
         this.$.slide1.style.height = value + '%';
         this.$.slide2.style.height = value + '%';
       },
+
+      _displayValue: function(immediateValue, value) {
+        return (this._onUserTrack) ? immediateValue : value;
+      }
 
     });
   </script>
